@@ -1,159 +1,300 @@
+import hashlib
+import html
 import re
-import sys
 from collections import Counter
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
+
+import bleach
 import frontmatter
 import markdown
 from markdown.extensions.codehilite import CodeHiliteExtension
 from markdown.extensions.fenced_code import FencedCodeExtension
 from markdown.extensions.tables import TableExtension
 from markdown.extensions.toc import TocExtension
-from .config import CATEGORY_ORDER
 
-def parse_markdown_file(filepath: Path) -> dict | None:
-    """
-    Parse a single Markdown file, extracting YAML frontmatter and
-    converting the body to HTML.
+from .config import (
+    ARTICLE_TYPES,
+    CATEGORY_META,
+    CATEGORY_ORDER,
+    REQUIRED_FIELDS,
+    REQUIRED_SECTIONS,
+    RISK_LEVELS,
+    TAG_ALIASES,
+)
 
-    Returns a dict containing all metadata and the rendered HTML body,
-    or None if the file cannot be parsed.
-    """
+KB_ID_PATTERN = re.compile(r"^KB-[A-Z0-9]+(?:-[A-Z0-9]+)*-\d{3}$")
+BANNED_PLACEHOLDERS = (
+    "general issue issue",
+    "get-service -name *general*",
+    "get-service -name *how*",
+    "failed or unresponsive status does not guarantee",
+)
+ALLOWED_TAGS = {
+    "a",
+    "blockquote",
+    "br",
+    "code",
+    "div",
+    "em",
+    "h2",
+    "h3",
+    "h4",
+    "hr",
+    "li",
+    "ol",
+    "p",
+    "pre",
+    "span",
+    "strong",
+    "table",
+    "tbody",
+    "td",
+    "th",
+    "thead",
+    "tr",
+    "ul",
+}
+ALLOWED_ATTRIBUTES = {
+    "a": ["href", "title"],
+    "code": ["class"],
+    "div": ["class"],
+    "h2": ["id"],
+    "h3": ["id"],
+    "h4": ["id"],
+    "span": ["class"],
+    "td": ["align"],
+    "th": ["align"],
+}
+
+
+class ArticleValidationError(ValueError):
+    """Raised when one or more published articles fail the content quality gate."""
+
+    def __init__(self, errors: list[str]):
+        self.errors = errors
+        lines = "\n".join(f"  - {error}" for error in errors)
+        super().__init__(
+            f"Content validation failed with {len(errors)} error(s):\n{lines}"
+        )
+
+
+def slugify(value: str) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "-", value.casefold()).strip("-")
+    return slug or "article"
+
+
+def _string_list(value: object) -> list[str]:
+    if isinstance(value, str):
+        values = value.split(",")
+    elif isinstance(value, list):
+        values = value
+    else:
+        return []
+    return [str(item).lstrip("#").strip() for item in values if str(item).strip()]
+
+
+def _normalize_tags(value: object) -> list[str]:
+    normalized: list[str] = []
+    seen: set[str] = set()
+    for tag in _string_list(value):
+        canonical = TAG_ALIASES.get(tag.casefold(), tag)
+        key = canonical.casefold()
+        if key not in seen:
+            normalized.append(canonical)
+            seen.add(key)
+    return normalized
+
+
+def _iso_date(value: object) -> str | None:
+    if isinstance(value, (datetime, date)):
+        return value.strftime("%Y-%m-%d")
+    if isinstance(value, str):
+        try:
+            return datetime.strptime(value, "%Y-%m-%d").strftime("%Y-%m-%d")
+        except ValueError:
+            return None
+    return None
+
+
+def _section_names(content: str) -> set[str]:
+    return {
+        match.group(1).strip().casefold()
+        for match in re.finditer(r"^##\s+(.+?)\s*$", content, flags=re.MULTILINE)
+    }
+
+
+def _validate_article(
+    filepath: Path, docs_dir: Path, metadata: dict, content: str
+) -> list[str]:
+    relative = filepath.relative_to(docs_dir).as_posix()
+    errors: list[str] = []
+    for field in REQUIRED_FIELDS:
+        if field not in metadata or metadata[field] in (None, "", []):
+            errors.append(f"{relative}: missing required field '{field}'")
+
+    category = str(metadata.get("category", "")).strip()
+    if category not in CATEGORY_ORDER:
+        errors.append(f"{relative}: unsupported category '{category}'")
+    elif relative.split("/", 1)[0] != CATEGORY_META[category]["slug"]:
+        errors.append(f"{relative}: folder does not match category '{category}'")
+
+    article_type = str(metadata.get("article_type", "")).strip()
+    if article_type not in ARTICLE_TYPES:
+        errors.append(f"{relative}: unsupported article_type '{article_type}'")
+
+    risk = str(metadata.get("risk", "")).strip()
+    if risk not in RISK_LEVELS:
+        errors.append(f"{relative}: unsupported risk '{risk}'")
+
+    kb_id = str(metadata.get("kb_id", "")).strip()
+    if kb_id and not KB_ID_PATTERN.fullmatch(kb_id):
+        errors.append(f"{relative}: invalid kb_id '{kb_id}'")
+
+    if metadata.get("last_updated") and not _iso_date(metadata["last_updated"]):
+        errors.append(f"{relative}: last_updated must use YYYY-MM-DD")
+
+    if len(_normalize_tags(metadata.get("tags"))) < 2:
+        errors.append(f"{relative}: include at least two normalized tags")
+    if not _string_list(metadata.get("platforms")):
+        errors.append(f"{relative}: include at least one platform")
+
+    headings = _section_names(content)
+    for section in REQUIRED_SECTIONS:
+        if section.casefold() not in headings:
+            errors.append(f"{relative}: missing section '## {section}'")
+
+    lowered = content.casefold()
+    if "[¶](" in content or "&para;" in lowered:
+        errors.append(f"{relative}: contains copied permalink markup")
+    for phrase in BANNED_PLACEHOLDERS:
+        if phrase in lowered:
+            errors.append(f"{relative}: contains banned placeholder phrase '{phrase}'")
+    if len(re.sub(r"\s+", " ", content).strip()) < 800:
+        errors.append(
+            f"{relative}: article is too short for the published quality gate"
+        )
+    return errors
+
+
+def parse_markdown_file(filepath: Path, docs_dir: Path | None = None) -> dict:
+    docs_root = docs_dir or filepath.parent
     try:
         post = frontmatter.load(filepath)
     except Exception as exc:
-        print(f"  [WARN] Could not parse {filepath.name}: {exc}")
-        return None
+        raise ArticleValidationError(
+            [f"{filepath.name}: invalid frontmatter: {exc}"]
+        ) from exc
 
-    meta = dict(post.metadata)
+    metadata = dict(post.metadata)
+    errors = _validate_article(filepath, docs_root, metadata, post.content)
+    if errors:
+        raise ArticleValidationError(errors)
 
-    # Validate required fields
-    required = ["title", "category"]
-    for field in required:
-        if field not in meta:
-            print(
-                f"  [WARN] Skipping {filepath.name}: missing required "
-                f"frontmatter field '{field}'"
-            )
-            return None
+    tags = _normalize_tags(metadata["tags"])
+    platforms = _string_list(metadata["platforms"])
+    updated_iso = _iso_date(metadata["last_updated"])
+    updated_display = datetime.strptime(updated_iso, "%Y-%m-%d").strftime("%B %d, %Y")
 
-    category_aliases = {
-        "faq": "FAQ",
-        "how-to": "How-To Guides",
-        "how to": "How-To Guides",
-        "how-to guides": "How-To Guides",
-    }
-    category_key = str(meta["category"]).strip().casefold()
-    meta["category"] = category_aliases.get(category_key, str(meta["category"]).strip())
-
-    # Ensure tags is a list
-    if isinstance(meta.get("tags"), str):
-        meta["tags"] = [t.strip() for t in meta["tags"].split(",") if t.strip()]
-    elif not isinstance(meta.get("tags"), list):
-        meta["tags"] = []
-    meta["tags"] = [t.lstrip("#").strip() for t in meta["tags"] if t.strip()]
-
-    # Generate a short title for the sidebar
-    short_title = meta.get("title", "")
-    for prefix in ["FAQ:", "FAQ -", "How-To:", "How-To Guides:", "Fix Notes:"]:
-        if short_title.lower().startswith(prefix.lower()):
-            short_title = short_title[len(prefix):].strip()
-    meta["short_title"] = short_title
-
-    # Normalise last_updated to a display string
-    last_updated = meta.get("last_updated", "")
-    if hasattr(last_updated, "strftime"):
-        last_updated = last_updated.strftime("%B %d, %Y")
-    elif isinstance(last_updated, str) and last_updated:
-        try:
-            parsed = datetime.strptime(last_updated, "%Y-%m-%d")
-            last_updated = parsed.strftime("%B %d, %Y")
-        except ValueError:
-            pass
-    meta["last_updated"] = last_updated or "Unknown"
-
-    # Convert Markdown body → HTML
-    md_extensions = [
-        FencedCodeExtension(),
-        CodeHiliteExtension(linenums=False, guess_lang=False),
-        TableExtension(),
-        TocExtension(permalink=True),
-        "nl2br",
-        "smarty",
-        "attr_list",
-    ]
-    md = markdown.Markdown(extensions=md_extensions)
-    body_html = md.convert(post.content)
-
-    # Generate a URL-safe slug from the filename (without extension)
-    slug = filepath.stem.lower()
-    slug = re.sub(r"[^a-z0-9\-]", "-", slug)
-    slug = re.sub(r"-{2,}", "-", slug).strip("-")
-
-    # Build plain-text excerpt for search index (first 300 chars of content)
-    plain_text = re.sub(r"<[^>]+>", "", body_html)
-    plain_text = plain_text.replace("¶", "").replace("&para;", "").strip()
-    plain_text = re.sub(r"^(Summary|Overview|Question|Issue|Symptoms|Issue Description|## [^\n]+)\s*", "", plain_text, flags=re.IGNORECASE).strip()
-    plain_text = re.sub(r"\s+", " ", plain_text).strip()
-    excerpt = plain_text[:300] + ("..." if len(plain_text) > 300 else "")
+    md = markdown.Markdown(
+        extensions=[
+            FencedCodeExtension(),
+            CodeHiliteExtension(linenums=False, guess_lang=False),
+            TableExtension(),
+            TocExtension(permalink=False),
+            "smarty",
+            "attr_list",
+        ]
+    )
+    rendered = md.convert(post.content)
+    body_html = bleach.clean(
+        rendered,
+        tags=ALLOWED_TAGS,
+        attributes=ALLOWED_ATTRIBUTES,
+        protocols={"http", "https", "mailto"},
+        strip=True,
+    )
+    toc_html = bleach.clean(
+        md.toc,
+        tags={"a", "li", "ul"},
+        attributes={"a": ["href"]},
+        protocols={"http", "https"},
+        strip=True,
+    )
+    plain_text = html.unescape(re.sub(r"<[^>]+>", " ", body_html))
+    plain_text = re.sub(r"\s+", " ", plain_text).replace("¶", "").strip()
+    summary_match = re.search(
+        r"^## Summary\s*(.+?)(?=^##\s+)",
+        post.content,
+        flags=re.MULTILINE | re.DOTALL,
+    )
+    summary_text = summary_match.group(1).strip() if summary_match else plain_text
+    summary_text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", summary_text)
+    summary_text = re.sub(r"[`*_>#-]+", " ", summary_text)
+    summary_text = re.sub(r"\s+", " ", summary_text).strip()
+    excerpt = summary_text[:220] + ("..." if len(summary_text) > 220 else "")
+    relative = filepath.relative_to(docs_root).as_posix()
+    slug = slugify(filepath.stem)
 
     return {
         "slug": slug,
-        "filename": filepath.name,
-        "title": meta.get("title", filepath.stem),
-        "short_title": meta.get("short_title", meta.get("title", filepath.stem)),
-        "author": meta.get("author", "Unknown"),
-        "category": meta.get("category", "Uncategorised"),
-        "last_updated": meta["last_updated"],
-        "target_audience": meta.get("target_audience", ""),
-        "tags": meta["tags"],
-        "severity": meta.get("severity", "N/A"),
-        "kb_id": meta.get("kb_id", ""),
-        "incident_date": str(meta.get("incident_date", "")),
-        "resolution_date": str(meta.get("resolution_date", "")),
-        "total_downtime": meta.get("total_downtime", ""),
-        "affected_users": meta.get("affected_users", ""),
+        "source_path": relative,
+        "title": str(metadata["title"]).strip(),
+        "author": str(metadata["author"]).strip(),
+        "category": str(metadata["category"]).strip(),
+        "category_slug": CATEGORY_META[str(metadata["category"]).strip()]["slug"],
+        "article_type": str(metadata["article_type"]).strip(),
+        "last_updated": updated_iso,
+        "last_updated_display": updated_display,
+        "kb_id": str(metadata["kb_id"]).strip(),
+        "tags": tags,
+        "platforms": platforms,
+        "support_tier": str(metadata["support_tier"]).strip(),
+        "risk": str(metadata["risk"]).strip(),
         "body_html": body_html,
-        "excerpt": excerpt,
+        "toc": toc_html,
         "plain_text": plain_text,
-        "toc": md.toc,
+        "excerpt": excerpt,
+        "content_hash": hashlib.sha256(
+            re.sub(r"\s+", " ", post.content).strip().encode("utf-8")
+        ).hexdigest(),
     }
 
+
 def discover_articles(docs_dir: Path) -> list[dict]:
-    """
-    Recursively walk docs_dir, parse every .md file found, and return
-    a list of article dicts sorted by category order then title.
-    """
-    articles = []
-    md_files = sorted(docs_dir.rglob("*.md"))
+    docs_dir = docs_dir.resolve()
+    files = sorted(docs_dir.rglob("*.md")) if docs_dir.is_dir() else []
+    if not files:
+        raise ArticleValidationError([f"No Markdown articles found in '{docs_dir}'"])
 
-    if not md_files:
-        sys.exit(f"[ERROR] No .md files found in '{docs_dir}'. Aborting.")
+    articles: list[dict] = []
+    errors: list[str] = []
+    for filepath in files:
+        try:
+            articles.append(parse_markdown_file(filepath, docs_dir))
+        except ArticleValidationError as exc:
+            errors.extend(exc.errors)
 
-    print(f"[INFO] Discovered {len(md_files)} Markdown file(s) in '{docs_dir}'")
+    for field, label in (
+        ("kb_id", "KB ID"),
+        ("slug", "slug"),
+        ("content_hash", "article body"),
+    ):
+        counts = Counter(article[field] for article in articles)
+        for value, count in sorted(counts.items()):
+            if count > 1:
+                sources = ", ".join(
+                    article["source_path"]
+                    for article in articles
+                    if article[field] == value
+                )
+                errors.append(f"Duplicate {label} across {count} articles: {sources}")
 
-    for filepath in md_files:
-        print(f"  Parsing: {filepath.relative_to(docs_dir)}")
-        article = parse_markdown_file(filepath)
-        if article:
-            article["source_path"] = filepath.relative_to(docs_dir).as_posix()
-            articles.append(article)
+    if errors:
+        raise ArticleValidationError(errors)
 
-    slug_counts = Counter(article["slug"] for article in articles)
-    for article in articles:
-        if slug_counts[article["slug"]] > 1:
-            parent_name = Path(article["source_path"]).parent.as_posix()
-            parent_slug = re.sub(r"[^a-z0-9]+", "-", parent_name.lower()).strip("-")
-            article["slug"] = f"{parent_slug}-{article['slug']}"
-
-    category_rank = {name: index for index, name in enumerate(CATEGORY_ORDER)}
+    rank = {category: index for index, category in enumerate(CATEGORY_ORDER)}
     articles.sort(
-        key=lambda article: (
-            category_rank.get(article["category"], len(category_rank)),
-            article["title"].casefold(),
-        )
+        key=lambda article: (rank[article["category"]], article["title"].casefold())
     )
-
-    print(f"[INFO] Successfully parsed {len(articles)} article(s)")
     return articles
-

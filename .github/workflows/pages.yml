@@ -30,8 +30,9 @@ jobs:
         run: python -m pip install -r requirements.txt
       - name: Test and build
         run: |
+          python -m kb check --docs ./docs
           python -m unittest discover -s tests -v
-          python kb_builder.py --docs ./docs --output ./output
+          python -m kb build --docs ./docs --output ./output
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

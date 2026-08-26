@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero" aria-labelledby="page-heading">
+  <div>
+    <p class="eyebrow">Tier 1 support portfolio</p>
+    <h1 id="page-heading">Troubleshooting that shows the work</h1>
+    <p class="hero-copy">Browse fictional support articles built around safe scope, evidence collection, validation, ticket notes, and clear escalation boundaries.</p>
+  </div>
+  <div class="hero-stats" aria-label="Library summary">
+    <div><strong>{{ article_count }}</strong><span>published articles</span></div>
+    <div><strong>{{ groups|length }}</strong><span>support domains</span></div>
+    <div><strong>100%</strong><span>content-gate pass</span></div>
+  </div>
+</section>
+
+<section class="filter-panel" aria-label="Article filters">
+  <div class="filter-heading">
+    <div>
+      <p class="eyebrow">Narrow the library</p>
+      <h2>Find the right support path</h2>
+    </div>
+    <button class="text-button" id="reset-filters" type="button">Reset filters</button>
+  </div>
+  <div class="filters">
+    <label>Support domain
+      <select id="filter-category">
+        <option value="">All domains</option>
+        {% for group in groups %}<option value="{{ group.name }}">{{ group.name }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Article type
+      <select id="filter-type">
+        <option value="">All article types</option>
+        {% for value in article_types %}<option value="{{ value }}">{{ value }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Platform
+      <select id="filter-platform">
+        <option value="">All platforms</option>
+        {% for value in platforms %}<option value="{{ value }}">{{ value }}</option>{% endfor %}
+      </select>
+    </label>
+  </div>
+</section>
+
+<div id="article-library">
+  {% for group in groups %}
+  <section class="category-section" data-category-section="{{ group.name }}" aria-labelledby="category-{{ group.meta.slug }}">
+    <header class="section-heading">
+      <div>
+        <p class="eyebrow">{{ group.articles|length }} article{% if group.articles|length != 1 %}s{% endif %}</p>
+        <h2 id="category-{{ group.meta.slug }}">{{ group.name }}</h2>
+        <p>{{ group.meta.description }}</p>
+      </div>
+    </header>
+    <div class="article-grid">
+      {% for item in group.articles %}
+      <a class="article-card" href="{{ item.slug }}.html"
+         data-slug="{{ item.slug }}"
+         data-category="{{ item.category }}"
+         data-type="{{ item.article_type }}"
+         data-platforms="{{ item.platforms|join('|') }}"
+         data-search="{{ item.title }} {{ item.kb_id }} {{ item.tags|join(' ') }} {{ item.excerpt }}">
+        <div class="card-topline">
+          <span class="kb-id">{{ item.kb_id }}</span>
+          <span class="risk risk-{{ item.risk|lower }}">{{ item.risk }} risk</span>
+        </div>
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.excerpt }}</p>
+        <div class="card-meta">
+          <span>{{ item.article_type }}</span>
+          <span>{{ item.support_tier }}</span>
+        </div>
+        <div class="tag-list" aria-label="Tags">
+          {% for tag in item.tags[:4] %}<span>{{ tag }}</span>{% endfor %}
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+</div>
+
+<section class="no-results" id="no-results" hidden role="status">
+  <strong>No published article matches those filters.</strong>
+  <p>Try a broader term, change a filter, or reset the library.</p>
+</section>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<article class="article-page">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="index.html">Knowledge base</a><span aria-hidden="true">/</span><span>{{ article.category }}</span><span aria-hidden="true">/</span><span aria-current="page">{{ article.kb_id }}</span>
+  </nav>
+
+  <header class="article-header">
+    <p class="eyebrow">{{ article.category }} · {{ article.article_type }}</p>
+    <h1>{{ article.title }}</h1>
+    <p class="article-lede">{{ article.excerpt }}</p>
+    <div class="article-badges">
+      <span class="kb-id">{{ article.kb_id }}</span>
+      <span class="risk risk-{{ article.risk|lower }}">{{ article.risk }} risk</span>
+      <span>{{ article.support_tier }}</span>
+    </div>
+  </header>
+
+  <dl class="metadata-grid">
+    <div><dt>Author</dt><dd>{{ article.author }}</dd></div>
+    <div><dt>Last updated</dt><dd>{{ article.last_updated_display }}</dd></div>
+    <div><dt>Platforms</dt><dd>{{ article.platforms|join(', ') }}</dd></div>
+    <div><dt>Source</dt><dd><a href="https://github.com/vxti-glitch/IT-Knowledge-Base/blob/main/docs/{{ article.source_path }}">View Markdown</a></dd></div>
+  </dl>
+
+  <div class="article-layout">
+    <div class="article-body">
+      {{ article.body_html|safe }}
+      <div class="article-tags">
+        <strong>Article tags</strong>
+        <div class="tag-list">{% for tag in article.tags %}<span>{{ tag }}</span>{% endfor %}</div>
+      </div>
+    </div>
+    <aside class="table-of-contents" aria-label="On this page">
+      <strong>On this page</strong>
+      {{ article.toc|safe }}
+    </aside>
+  </div>
+
+  <a class="back-link" href="index.html">← Back to the published library</a>
+</article>
+{% endblock %}

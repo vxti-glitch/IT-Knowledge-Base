@@ -1,146 +1,207 @@
-# Enterprise IT Knowledge Base Generator
+# IT Support Knowledge Base Lab
 
-![Python](https://img.shields.io/badge/Python-3.12+-blue.svg?style=flat-square) [![Build and test](https://github.com/vxti-glitch/IT-Knowledge-Base/actions/workflows/ci.yml/badge.svg)](https://github.com/vxti-glitch/IT-Knowledge-Base/actions/workflows/ci.yml) ![Output](https://img.shields.io/badge/Output-Static%20HTML%2FCSS%2FJS-success.svg?style=flat-square)
+[![Python](https://img.shields.io/badge/Python-3.12+-3776AB.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Build and test](https://github.com/vxti-glitch/IT-Knowledge-Base/actions/workflows/ci.yml/badge.svg)](https://github.com/vxti-glitch/IT-Knowledge-Base/actions/workflows/ci.yml)
+[![Deploy knowledge base](https://github.com/vxti-glitch/IT-Knowledge-Base/actions/workflows/pages.yml/badge.svg)](https://github.com/vxti-glitch/IT-Knowledge-Base/actions/workflows/pages.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
 
-A Python static-site generator for IT help-desk and system-administration documentation. It compiles Markdown troubleshooting guides into a searchable, responsive HTML portal that can be reviewed locally or deployed as static files.
+[Open the live simulated knowledge base](https://vxti-glitch.github.io/IT-Knowledge-Base/) · [Take the 90-second tour](#90-second-tour) · [Browse the source articles](docs) · [Review the quality checks](tests/test_kb.py)
 
-> **Portfolio boundary:** The organizations, systems, incidents, and support procedures in the sample articles are fictional lab material. They are documentation examples, not production runbooks or employment records. Validate commands, permissions, and vendor guidance before using any procedure in a real environment.
+> **SIMULATED PORTFOLIO PROJECT:** The organizations, users, devices, incidents, and support procedures in this repository are fictional. The material demonstrates documentation and troubleshooting practices; it is not production documentation, an employment record, or a claim of live enterprise administration. Validate commands, permissions, and current vendor guidance before real-world use.
 
-- [Business Value](#business-value)
-- [Architecture](#architecture)
-- [Prerequisites](#prerequisites)
-- [How to Use](#how-to-use)
-- [Markdown Schema](#markdown-schema)
-- [Deployment Pipeline](#deployment-pipeline)
-- [Security & Operations](#security--operations)
+A searchable IT-support documentation lab built for remote Tier 1, help-desk, desktop-support, and technical-support portfolios. Twenty focused articles are compiled from Markdown into a responsive static website, validated by automated content tests, and deployed through GitHub Actions.
 
----
+![Knowledge base homepage with support domains and article cards](.github/assets/knowledge-base-home.png)
 
-## Business Value
+## 90-second tour
 
-This project models a lightweight documentation workflow in which Markdown is the source of truth and every change can be reviewed in Git. The generated site provides client-side search, categories, article metadata, and static deployment without requiring a database or server-side application.
+1. [Open the live knowledge base](https://vxti-glitch.github.io/IT-Knowledge-Base/).
+2. Search for `BitLocker`, `account lockout`, `print queue`, or `VPN`.
+3. Filter the library by support domain, article type, or platform.
+4. Open an article and review its safety boundary, evidence collection, validation, ticket note, escalation criteria, and official references.
+5. Review the [automated tests](tests/test_kb.py) and [Pages deployment workflow](.github/workflows/pages.yml).
 
-The portfolio value is the workflow itself: consistent article metadata, repeatable builds, searchable output, automated tests, and reviewable documentation changes. No unsupported time-savings, performance, cost, or production-usage claims are made.
+## What this project demonstrates
 
----
+- Tier 1 troubleshooting that starts with scope and evidence
+- Clear separation between technician actions and escalation boundaries
+- User-facing communication and internal ticket-note examples
+- Windows 11, Active Directory, Microsoft 365, Entra ID, networking, VPN, printing, onboarding, and security intake
+- Searchable knowledge-base taxonomy and consistent metadata
+- Python static-site generation with sanitized Markdown output
+- Accessible navigation, responsive layout, and keyboard-friendly controls
+- Automated content validation, local link checking, CI, and GitHub Pages deployment
+
+## Published support domains
+
+| Domain | Examples |
+|---|---|
+| Identity & Access | AD account lockouts, password/MFA reset, unfamiliar MFA prompts |
+| Microsoft 365 | Outlook profiles, Teams reset, OneDrive sync, shared mailboxes |
+| Windows Endpoint | BitLocker recovery, performance triage, software installation controls |
+| Networking & VPN | Connected-without-access VPN, Wi-Fi drops, DNS resolution |
+| Printing | Offline printer triage and stuck print queues |
+| User Lifecycle | Controlled onboarding and offboarding |
+| Security & Escalation | Phishing intake and lost-device response |
+| Support Operations | Safe, clear remote-support sessions |
+
+The published library intentionally favors 20 specific, interview-ready articles over a larger collection of repetitive or unverified material.
+
+## Screenshots
+
+| Search and filters | Article view |
+|---|---|
+| ![Knowledge base filtered search results](.github/assets/knowledge-base-search.png) | ![Knowledge base article with metadata and table of contents](.github/assets/knowledge-base-article.png) |
+
+![Responsive mobile knowledge base](.github/assets/knowledge-base-mobile.png)
 
 ## Architecture
 
 ```text
-IT-KB-Generator/
-├── docs/                      # Markdown source of truth
-│   ├── faq/                   # Frequently Asked Questions (.md)
-│   └── how-to/                # Step-by-step guides (.md)
-├── kb_builder.py              # Core Python static site generator
-├── requirements.txt           # Python dependencies
-├── .github/workflows/         # CI/CD deployment pipeline
-└── output/                    # Compiled static assets (HTML/CSS/JS)
+IT-Knowledge-Base/
+├── .github/
+│   ├── assets/                    # Recruiter-facing screenshots
+│   └── workflows/
+│       ├── ci.yml                 # Validate, test, and build every change
+│       └── pages.yml              # Deploy validated output to GitHub Pages
+├── docs/                          # Published Markdown source
+│   ├── identity-access/
+│   ├── microsoft-365/
+│   ├── networking-vpn/
+│   ├── printing/
+│   ├── security-escalation/
+│   ├── support-operations/
+│   ├── user-lifecycle/
+│   └── windows-endpoint/
+├── kb/
+│   ├── static/                    # Reviewable CSS and JavaScript
+│   ├── templates/                 # Autoescaped Jinja HTML templates
+│   ├── builder.py                 # Static-site build and derived report
+│   ├── cli.py                     # Build and validation commands
+│   ├── config.py                  # Taxonomy and quality policy
+│   ├── parser.py                  # Frontmatter, Markdown, and content validation
+│   └── renderer.py                # Template rendering
+├── tests/test_kb.py               # Parser, content, build, and link tests
+├── AUTHORING_GUIDE.md             # Article schema and writing standard
+├── requirements.txt
+├── requirements-dev.txt
+└── README.md
 ```
 
-**Generation flow:**
+Generation flow:
 
-The `kb_builder.py` script executes the following atomic sequence:
-1. Crawls the `docs/` directory for `.md` files.
-2. Extracts and validates YAML frontmatter (metadata).
-3. Compiles Markdown body to HTML, applying Pygments syntax highlighting.
-4. Generates a dynamic, client-side search index (`search_index.json`) for instant querying.
-5. Renders a unified `index.html` featuring collapsible OS-based sidebars and filtering.
+1. `python -m kb check` validates every published article.
+2. The parser normalizes metadata and rejects duplicate or placeholder content.
+3. Markdown is rendered and sanitized before entering autoescaped templates.
+4. The builder creates `index.html`, one page per article, local CSS/JavaScript, `search-index.json`, and `build-report.json`.
+5. Tests verify content integrity, generated files, local links, the simulation boundary, and self-contained assets.
+6. GitHub Pages deploys only after validation and tests pass.
 
----
+## Run it on Windows
 
-## Prerequisites
+Run these commands from a normal PowerShell window, not from `C:\Windows\System32`:
 
-**Python Environment:**
+```powershell
+Set-Location "$env:USERPROFILE\Documents"
+git clone https://github.com/vxti-glitch/IT-Knowledge-Base.git
+Set-Location .\IT-Knowledge-Base
 
-```bash
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
-```
 
-**Dependencies:**
-- `markdown>=3.5.2` - Core parser
-- `python-frontmatter>=1.1.0` - Metadata extraction
-- `Pygments>=2.17.2` - Code block syntax highlighting
-
----
-
-## How to Use
-
-### 1. Authoring
-
-Create a new Markdown file in the appropriate directory (`docs/faq/` or `docs/how-to/`). Adhere to the required YAML frontmatter schema.
-
-### 2. Local Build & Testing
-
-Run the generator to compile the site to the `output/` directory:
-
-```bash
-python kb_builder.py --docs ./docs --output ./output
-```
-
-Run the automated parser and build tests:
-
-```bash
+python -m kb check
 python -m unittest discover -s tests -v
+python -m kb build --docs .\docs --output .\output
+python -m http.server 8000 --directory .\output
 ```
 
-Preview the site locally using a simple HTTP server:
+Open [http://localhost:8000](http://localhost:8000) in a browser. Press `Ctrl+C` in PowerShell when finished.
 
-```bash
-cd output
-python -m http.server 8000
+If PowerShell blocks virtual-environment activation, the project can still run through the environment's Python executable:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m kb check
+.\.venv\Scripts\python.exe -m kb build --docs .\docs --output .\output
+.\.venv\Scripts\python.exe -m http.server 8000 --directory .\output
 ```
 
----
+## Content quality gate
 
-## Markdown Schema
+A published article must have:
 
-All articles must include valid YAML frontmatter. The parser explicitly looks for these fields to render metadata badges and sidebar navigation groups.
+- A unique `KB-DOMAIN-###` identifier
+- A supported domain, article type, risk level, and matching folder
+- ISO `last_updated` date, author, support tier, tags, and platforms
+- Summary, scope and safety, symptoms, information to collect, diagnostics, next action, validation, ticket note, escalation criteria, and references
+- At least two normalized tags
+- No duplicate body, copied permalink marker, or known placeholder phrase
 
-| Field | Required | Description |
-|---|---|---|
-| `title` | Yes | Short, punchy display title (e.g., "Print Spooler Crash") |
-| `category` | Yes | `FAQ` or `How-To Guides` |
-| `last_updated` | No | ISO 8601 modification date; displayed as `Unknown` if omitted |
-| `author` | No | Author or team name (for example, `Tier 1 Support`) |
-| `tags` | No | Array or comma-separated list of searchable keywords |
-| `severity` | No | Impact level such as `High`, `Medium`, or `Low` |
-| `kb_id` | No | Optional internal article identifier |
+The build fails before deployment when any requirement is violated. See [AUTHORING_GUIDE.md](AUTHORING_GUIDE.md) for the exact schema.
 
-**Example Document:**
+## Commands
 
-```markdown
----
-title: "BitLocker Recovery Key Prompt"
-category: "FAQ"
-last_updated: "2026-03-12"
-author: "Tier 1 Support"
-severity: "High"
-tags: ["Windows", "BitLocker", "Encryption"]
----
+```powershell
+# Validate published content without building
+python -m kb check --docs .\docs
 
-### Issue
-User is prompted for a BitLocker recovery key at boot...
+# Run automated tests
+python -m unittest discover -s tests -v
+
+# Build the static site
+python -m kb build --docs .\docs --output .\output
+
+# Preview the generated site
+python -m http.server 8000 --directory .\output
 ```
 
----
+## Generated artifacts
 
-## Deployment Pipeline
+The ignored `output/` directory contains:
 
-This repository includes a continuous deployment pipeline configured for **GitHub Pages**. 
+```text
+output/
+├── assets/
+│   ├── site.css
+│   └── site.js
+├── index.html
+├── <article-slug>.html
+├── search-index.json
+└── build-report.json
+```
 
-When code is pushed or a Pull Request is merged into the `main` branch, the `.github/workflows/deploy.yml` action automatically:
-1. Provisions an Ubuntu runner.
-2. Installs Python and the `requirements.txt` dependencies.
-3. Executes `kb_builder.py`.
-4. Uploads the `output/` directory as an artifact.
-5. Deploys the static site to the GitHub Pages environment.
+`build-report.json` contains derived portfolio facts such as article counts and quality-gate status. It does not contain production KPIs or employment results.
 
-**Configuration:** Ensure GitHub Pages is set to use **GitHub Actions** as the source in the repository settings.
+## Deployment
 
----
+[`.github/workflows/pages.yml`](.github/workflows/pages.yml) runs on pushes to `main` and manual dispatch. It installs dependencies, validates content, runs tests, builds the complete site, and deploys `output/` through the official GitHub Pages actions.
 
-## Security & Operations
+GitHub Pages should remain configured with:
 
-- **Reduced server-side attack surface:** The generated portal is static and does not require a database or server-side application runtime. Generated HTML and third-party dependencies must still be reviewed and maintained.
-- **Access Control:** The live site can be deployed internally behind a corporate firewall or VPN, or authenticated via Cloudflare Access / Entra ID Application Proxy if hosted externally.
-- **GitOps Driven:** Documentation changes can be reviewed through pull requests and reverted through Git history.
+- **Source:** GitHub Actions
+- **Website:** `https://vxti-glitch.github.io/IT-Knowledge-Base/`
+- **HTTPS:** Enforced
+
+## Honest interview discussion
+
+Useful points to explain:
+
+- Why quality and specificity matter more than article count
+- How the content gate prevents duplicate IDs and generic templates
+- Why the live site visibly labels every scenario as simulated
+- How the search index, filters, and query-string search work
+- Why commands include scope, approval, validation, and escalation guidance
+- How CI prevents invalid documentation from reaching GitHub Pages
+
+Limitations to disclose:
+
+- The scenarios and support data are fictional.
+- No live tenant, domain, production queue, or employer system is represented.
+- Commands were not executed against a production environment.
+- Vendor instructions and organizational policy must be revalidated before operational use.
+
+## License
+
+Code and original documentation in this repository are available under the [MIT License](LICENSE). External references remain subject to their publishers' terms.
