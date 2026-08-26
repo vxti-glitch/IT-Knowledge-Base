@@ -37,6 +37,15 @@ def parse_markdown_file(filepath: Path) -> dict | None:
             )
             return None
 
+    category_aliases = {
+        "faq": "FAQ",
+        "how-to": "How-To Guides",
+        "how to": "How-To Guides",
+        "how-to guides": "How-To Guides",
+    }
+    category_key = str(meta["category"]).strip().casefold()
+    meta["category"] = category_aliases.get(category_key, str(meta["category"]).strip())
+
     # Ensure tags is a list
     if isinstance(meta.get("tags"), str):
         meta["tags"] = [t.strip() for t in meta["tags"].split(",") if t.strip()]
