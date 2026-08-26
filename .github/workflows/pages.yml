@@ -34,7 +34,7 @@ jobs:
           python -m unittest discover -s tests -v
           python -m kb build --docs ./docs --output ./output
       - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: ./output
       - name: Deploy to GitHub Pages
