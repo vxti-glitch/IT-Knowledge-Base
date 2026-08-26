@@ -111,7 +111,7 @@ def _iso_date(value: object) -> str | None:
         return value.strftime("%Y-%m-%d")
     if isinstance(value, str):
         try:
-            return datetime.strptime(value, "%Y-%m-%d").strftime("%Y-%m-%d")
+            return date.fromisoformat(value).isoformat()
         except ValueError:
             return None
     return None
@@ -194,7 +194,7 @@ def parse_markdown_file(filepath: Path, docs_dir: Path | None = None) -> dict:
     tags = _normalize_tags(metadata["tags"])
     platforms = _string_list(metadata["platforms"])
     updated_iso = _iso_date(metadata["last_updated"])
-    updated_display = datetime.strptime(updated_iso, "%Y-%m-%d").strftime("%B %d, %Y")
+    updated_display = date.fromisoformat(updated_iso).strftime("%B %d, %Y")
 
     md = markdown.Markdown(
         extensions=[

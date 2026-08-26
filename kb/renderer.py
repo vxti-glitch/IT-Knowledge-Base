@@ -11,7 +11,6 @@ from .config import (
     SITE_TITLE,
 )
 
-
 TEMPLATE_DIR = Path(__file__).with_name("templates")
 
 

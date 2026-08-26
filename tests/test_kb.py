@@ -8,7 +8,6 @@ from urllib.parse import unquote, urlsplit
 from kb.builder import build_site
 from kb.parser import ArticleValidationError, discover_articles, parse_markdown_file
 
-
 REPO_ROOT = Path(__file__).resolve().parents[1]
 REQUIRED_BODY = """
 ## Summary
