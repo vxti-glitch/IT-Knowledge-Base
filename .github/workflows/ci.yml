@@ -11,8 +11,8 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
           cache: pip
@@ -29,9 +29,8 @@ jobs:
       - name: Build the complete knowledge base
         run: python -m kb build --docs ./docs --output ./output
       - name: Upload validated static site
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: validated-knowledge-base
           path: ./output
           if-no-files-found: error
-
