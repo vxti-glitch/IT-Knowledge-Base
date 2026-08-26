@@ -1,8 +1,10 @@
 # Enterprise IT Knowledge Base Generator
 
-![Python](https://img.shields.io/badge/Python-3.12+-blue.svg?style=flat-square) ![Build](https://img.shields.io/badge/Build-GitHub%20Actions-2088FF.svg?style=flat-square) ![Output](https://img.shields.io/badge/Output-Static%20HTML%2FCSS%2FJS-success.svg?style=flat-square) ![Hosting](https://img.shields.io/badge/Hosting-GitHub%20Pages-brightgreen.svg?style=flat-square) ![License](https://img.shields.io/badge/License-MIT-lightgrey.svg?style=flat-square)
+![Python](https://img.shields.io/badge/Python-3.12+-blue.svg?style=flat-square) [![Build and test](https://github.com/vxti-glitch/IT-Knowledge-Base/actions/workflows/ci.yml/badge.svg)](https://github.com/vxti-glitch/IT-Knowledge-Base/actions/workflows/ci.yml) ![Output](https://img.shields.io/badge/Output-Static%20HTML%2FCSS%2FJS-success.svg?style=flat-square)
 
-A high-performance, automated static site generator engineered specifically for IT Help Desk and SysAdmin documentation. It compiles standard Markdown files containing troubleshooting guides into a fast, searchable, and responsive zero-dependency web portal.
+A Python static-site generator for IT help-desk and system-administration documentation. It compiles Markdown troubleshooting guides into a searchable, responsive HTML portal that can be reviewed locally or deployed as static files.
+
+> **Portfolio boundary:** The organizations, systems, incidents, and support procedures in the sample articles are fictional lab material. They are documentation examples, not production runbooks or employment records. Validate commands, permissions, and vendor guidance before using any procedure in a real environment.
 
 - [Business Value](#business-value)
 - [Architecture](#architecture)
@@ -16,25 +18,9 @@ A high-performance, automated static site generator engineered specifically for 
 
 ## Business Value
 
-Help Desk documentation is often scattered across slow SharePoint sites, messy Word documents, or bloated Wiki software. Finding the right fix notes during a live incident is a high-stress, time-consuming task for technicians.
+This project models a lightweight documentation workflow in which Markdown is the source of truth and every change can be reviewed in Git. The generated site provides client-side search, categories, article metadata, and static deployment without requiring a database or server-side application.
 
-**Knowledge retrieval cost without automation:**
-
-A technician typically spends 5-10 minutes searching across multiple platforms to find the correct diagnostic steps for a known issue. For a Help Desk handling 500 tickets a week, this translates to 40-80 hours of wasted labor per week simply searching for documentation.
-
-**Documentation drift risk without automation:**
-
-Traditional wikis require logging into a separate web interface, leading to "documentation drift" where technicians fix issues but avoid the friction of updating the wiki. 
-
-**What this generator delivers:**
-
-| Metric | Traditional Wiki/SharePoint | Automated Static Site (This Engine) |
-|---|---|---|
-| Load time per article | 2-5 seconds | Under 100 milliseconds |
-| Search speed | Server-dependent, slow | Instant (Client-side JSON index) |
-| Authoring friction | High (requires web portal login) | Low (Git + standard Markdown editors) |
-| Hosting cost & maintenance | Requires DB, server patching, backups | $0. Zero backend infrastructure required. |
-| Version control | Clunky wiki history | Native Git versioning & peer review (PRs) |
+The portfolio value is the workflow itself: consistent article metadata, repeatable builds, searchable output, automated tests, and reviewable documentation changes. No unsupported time-savings, performance, cost, or production-usage claims are made.
 
 ---
 
@@ -91,6 +77,12 @@ Run the generator to compile the site to the `output/` directory:
 python kb_builder.py --docs ./docs --output ./output
 ```
 
+Run the automated parser and build tests:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
 Preview the site locally using a simple HTTP server:
 
 ```bash
@@ -107,22 +99,21 @@ All articles must include valid YAML frontmatter. The parser explicitly looks fo
 | Field | Required | Description |
 |---|---|---|
 | `title` | Yes | Short, punchy display title (e.g., "Print Spooler Crash") |
-| `date_added` | Yes | ISO 8601 creation date |
-| `last_updated` | Yes | ISO 8601 modification date |
-| `author` | Yes | Author or team name (e.g., "Tier 1 Support") |
-| `audience` | Yes | Target audience (e.g., "SysAdmin", "Help Desk") |
-| `severity` | Yes | Impact level (e.g., "High", "Medium", "Low") |
-| `tags` | Yes | Array of searchable keywords (must include the OS like `Windows` or `Linux`) |
+| `category` | Yes | `FAQ` or `How-To Guides` |
+| `last_updated` | No | ISO 8601 modification date; displayed as `Unknown` if omitted |
+| `author` | No | Author or team name (for example, `Tier 1 Support`) |
+| `tags` | No | Array or comma-separated list of searchable keywords |
+| `severity` | No | Impact level such as `High`, `Medium`, or `Low` |
+| `kb_id` | No | Optional internal article identifier |
 
 **Example Document:**
 
 ```markdown
 ---
 title: "BitLocker Recovery Key Prompt"
-date_added: "2026-03-12"
+category: "FAQ"
 last_updated: "2026-03-12"
 author: "Tier 1 Support"
-audience: "Help Desk"
 severity: "High"
 tags: ["Windows", "BitLocker", "Encryption"]
 ---
@@ -150,12 +141,6 @@ When code is pushed or a Pull Request is merged into the `main` branch, the `.gi
 
 ## Security & Operations
 
-- **Zero-Day Resilience:** By compiling to 100% static HTML/CSS/JS, the deployed portal has no backend database, no PHP/Node.js runtime, and no dynamic server-side processing. This eliminates vulnerability to SQL injection, remote code execution (RCE), and common CMS exploits.
+- **Reduced server-side attack surface:** The generated portal is static and does not require a database or server-side application runtime. Generated HTML and third-party dependencies must still be reviewed and maintained.
 - **Access Control:** The live site can be deployed internally behind a corporate firewall or VPN, or authenticated via Cloudflare Access / Entra ID Application Proxy if hosted externally.
-- **GitOps Driven:** All documentation changes go through standard Git workflows. Incorrect or malicious edits can be reverted instantly via standard Git commands.
-
----
-
-## License
-
-MIT
+- **GitOps Driven:** Documentation changes can be reviewed through pull requests and reverted through Git history.

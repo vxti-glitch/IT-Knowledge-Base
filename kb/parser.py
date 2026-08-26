@@ -1,5 +1,6 @@
 import re
 import sys
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
 import frontmatter
@@ -8,6 +9,7 @@ from markdown.extensions.codehilite import CodeHiliteExtension
 from markdown.extensions.fenced_code import FencedCodeExtension
 from markdown.extensions.tables import TableExtension
 from markdown.extensions.toc import TocExtension
+from .config import CATEGORY_ORDER
 
 def parse_markdown_file(filepath: Path) -> dict | None:
     """
@@ -125,7 +127,23 @@ def discover_articles(docs_dir: Path) -> list[dict]:
         print(f"  Parsing: {filepath.relative_to(docs_dir)}")
         article = parse_markdown_file(filepath)
         if article:
+            article["source_path"] = filepath.relative_to(docs_dir).as_posix()
             articles.append(article)
+
+    slug_counts = Counter(article["slug"] for article in articles)
+    for article in articles:
+        if slug_counts[article["slug"]] > 1:
+            parent_name = Path(article["source_path"]).parent.as_posix()
+            parent_slug = re.sub(r"[^a-z0-9]+", "-", parent_name.lower()).strip("-")
+            article["slug"] = f"{parent_slug}-{article['slug']}"
+
+    category_rank = {name: index for index, name in enumerate(CATEGORY_ORDER)}
+    articles.sort(
+        key=lambda article: (
+            category_rank.get(article["category"], len(category_rank)),
+            article["title"].casefold(),
+        )
+    )
 
     print(f"[INFO] Successfully parsed {len(articles)} article(s)")
     return articles
