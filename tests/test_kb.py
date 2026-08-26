@@ -46,6 +46,17 @@ class ParserTests(unittest.TestCase):
 
             self.assertIsNone(parse_markdown_file(article_path))
 
+    def test_how_to_category_alias_is_normalized_for_navigation(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            article_path = Path(temp_dir) / "how-to-alias.md"
+            article_path.write_text(
+                ARTICLE.replace("How-To Guides", "How-To"), encoding="utf-8"
+            )
+
+            article = parse_markdown_file(article_path)
+
+            self.assertEqual(article["category"], "How-To Guides")
+
 
 class BuildTests(unittest.TestCase):
     def test_build_creates_searchable_static_site(self):
