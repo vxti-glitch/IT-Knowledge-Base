@@ -78,8 +78,12 @@ def render_article_page(article: dict, articles: list[dict], build_ts: str) -> s
         score += len(set(candidate["tags"]) & set(article["tags"]))
         return score, candidate["title"].casefold()
 
-    related = [candidate for candidate in articles if candidate["slug"] != article["slug"]]
-    related.sort(key=lambda candidate: (-relevance(candidate)[0], relevance(candidate)[1]))
+    related = [
+        candidate for candidate in articles if candidate["slug"] != article["slug"]
+    ]
+    related.sort(
+        key=lambda candidate: (-relevance(candidate)[0], relevance(candidate)[1])
+    )
     context = _base_context(articles, build_ts)
     context.update(
         {
