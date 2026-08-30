@@ -70,6 +70,16 @@ def render_index_page(articles: list[dict], build_ts: str) -> str:
 
 
 def render_article_page(article: dict, articles: list[dict], build_ts: str) -> str:
+    def relevance(candidate: dict) -> tuple[int, str]:
+        score = 0
+        if candidate["category"] == article["category"]:
+            score += 6
+        score += 2 * len(set(candidate["platforms"]) & set(article["platforms"]))
+        score += len(set(candidate["tags"]) & set(article["tags"]))
+        return score, candidate["title"].casefold()
+
+    related = [candidate for candidate in articles if candidate["slug"] != article["slug"]]
+    related.sort(key=lambda candidate: (-relevance(candidate)[0], relevance(candidate)[1]))
     context = _base_context(articles, build_ts)
     context.update(
         {
@@ -77,6 +87,7 @@ def render_article_page(article: dict, articles: list[dict], build_ts: str) -> s
             "page_title": f"{article['title']} — {SITE_TITLE}",
             "page_description": article["excerpt"][:155],
             "article": article,
+            "related_articles": related[:3],
         }
     )
     return _environment().get_template("article.html").render(**context)

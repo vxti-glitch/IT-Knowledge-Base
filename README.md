@@ -19,7 +19,8 @@ A searchable IT-support documentation lab built for remote Tier 1, help-desk, de
 2. Search for `BitLocker`, `account lockout`, `print queue`, or `VPN`.
 3. Filter the library by support domain, article type, or platform.
 4. Open an article and review its safety boundary, evidence collection, validation, ticket note, escalation criteria, and official references.
-5. Review the [automated tests](tests/test_kb.py) and [Pages deployment workflow](.github/workflows/pages.yml).
+5. Copy the simulated ticket note, record browser-only article feedback, and follow the related-article suggestions.
+6. Review the [automated tests](tests/test_kb.py) and [Pages deployment workflow](.github/workflows/pages.yml).
 
 ## What this project demonstrates
 
@@ -28,6 +29,7 @@ A searchable IT-support documentation lab built for remote Tier 1, help-desk, de
 - User-facing communication and internal ticket-note examples
 - Windows 11, Active Directory, Microsoft 365, Entra ID, networking, VPN, printing, onboarding, and security intake
 - Searchable knowledge-base taxonomy and consistent metadata
+- Article feedback, related-content suggestions, access labels, and one-click simulated ticket-note copying
 - Python static-site generation with sanitized Markdown output
 - Accessible navigation, responsive layout, and keyboard-friendly controls
 - Automated content validation, local link checking, CI, and GitHub Pages deployment

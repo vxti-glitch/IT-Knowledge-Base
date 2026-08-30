@@ -74,6 +74,40 @@
     container.appendChild(button);
   });
 
+  const articleActionStatus = document.getElementById("article-action-status");
+  const copyTicketNote = document.getElementById("copy-ticket-note");
+  if (copyTicketNote) {
+    copyTicketNote.addEventListener("click", async function () {
+      const heading = Array.from(document.querySelectorAll(".article-body h2, .article-body h3"))
+        .find(function (item) { return normalize(item.textContent).includes("ticket note example"); });
+      const note = heading ? heading.nextElementSibling : null;
+      if (!note) {
+        articleActionStatus.textContent = "This article does not include a ticket-note example.";
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(note.innerText.trim());
+        articleActionStatus.textContent = "Simulated ticket note copied. Review it before using it in a real ticket.";
+      } catch (error) {
+        articleActionStatus.textContent = "Copy is unavailable. Select the ticket-note example manually.";
+      }
+    });
+  }
+
+  document.querySelectorAll(".feedback-button").forEach(function (button) {
+    button.addEventListener("click", function () {
+      const value = button.dataset.feedback;
+      localStorage.setItem("kb-feedback:" + window.location.pathname, value);
+      document.querySelectorAll(".feedback-button").forEach(function (item) {
+        item.classList.toggle("is-selected", item === button);
+        item.setAttribute("aria-pressed", String(item === button));
+      });
+      articleActionStatus.textContent = value === "yes"
+        ? "Marked helpful in this browser demonstration."
+        : "Marked for improvement in this browser demonstration.";
+    });
+  });
+
   document.addEventListener("keydown", function (event) {
     if (event.key === "/" && searchInput && document.activeElement !== searchInput) {
       event.preventDefault();

@@ -21,6 +21,8 @@
     <div><dt>Author</dt><dd>{{ article.author }}</dd></div>
     <div><dt>Last updated</dt><dd>{{ article.last_updated_display }}</dd></div>
     <div><dt>Platforms</dt><dd>{{ article.platforms|join(', ') }}</dd></div>
+    <div><dt>Access</dt><dd>Internal training article</dd></div>
+    <div><dt>Version</dt><dd>{{ build_version }}</dd></div>
     <div><dt>Source</dt><dd><a href="https://github.com/vxti-glitch/IT-Knowledge-Base/blob/main/docs/{{ article.source_path }}">View Markdown</a></dd></div>
   </dl>
 
@@ -31,6 +33,24 @@
         <strong>Article tags</strong>
         <div class="tag-list">{% for tag in article.tags %}<span>{{ tag }}</span>{% endfor %}</div>
       </div>
+      <section class="article-actions" aria-labelledby="article-actions-title">
+        <div><p class="eyebrow">Technician actions</p><h2 id="article-actions-title">Use the guidance</h2><p>Copy the simulated ticket-note example or record whether this article answered the support question.</p></div>
+        <div class="article-action-buttons">
+          <button type="button" id="copy-ticket-note">Copy ticket note</button>
+          <button type="button" class="feedback-button" data-feedback="yes">Helpful</button>
+          <button type="button" class="feedback-button" data-feedback="no">Needs improvement</button>
+        </div>
+        <p class="feedback-status" id="article-action-status" role="status" aria-live="polite">Feedback is stored only in this browser demonstration.</p>
+      </section>
+      <section class="related-articles" aria-labelledby="related-title">
+        <p class="eyebrow">Continue troubleshooting</p>
+        <h2 id="related-title">Related articles</h2>
+        <div class="related-grid">
+          {% for related in related_articles %}
+          <a href="{{ related.slug }}.html"><span>{{ related.category }}</span><strong>{{ related.title }}</strong><small>{{ related.kb_id }} · {{ related.article_type }}</small></a>
+          {% endfor %}
+        </div>
+      </section>
     </div>
     <aside class="table-of-contents" aria-label="On this page">
       <strong>On this page</strong>
