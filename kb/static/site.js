@@ -130,6 +130,7 @@
   const categoryFilter = document.getElementById("filter-category");
   const typeFilter = document.getElementById("filter-type");
   const platformFilter = document.getElementById("filter-platform");
+  const audienceFilter = document.getElementById("filter-audience");
   const resetFilters = document.getElementById("reset-filters");
   const searchRecords = new Map();
 
@@ -172,6 +173,7 @@
     const category = selectedValue(categoryFilter);
     const articleType = selectedValue(typeFilter);
     const platform = selectedValue(platformFilter);
+    const audience = selectedValue(audienceFilter);
     let visible = 0;
 
     cards.forEach(function (card) {
@@ -181,7 +183,8 @@
       const typeMatch = !articleType || card.dataset.type === articleType;
       const platforms = (card.dataset.platforms || "").split("|");
       const platformMatch = !platform || platforms.includes(platform);
-      const show = queryMatch && categoryMatch && typeMatch && platformMatch;
+      const audienceMatch = !audience || card.dataset.audience === audience;
+      const show = queryMatch && categoryMatch && typeMatch && platformMatch && audienceMatch;
       card.hidden = !show;
       if (show) visible += 1;
     });
@@ -192,7 +195,7 @@
       });
     });
 
-    const active = Boolean(query || category || articleType || platform);
+    const active = Boolean(query || category || articleType || platform || audience);
     if (resultsCount) {
       resultsCount.textContent = active
         ? visible + " of " + cards.length + " articles"
@@ -228,7 +231,7 @@
     });
   }
 
-  [categoryFilter, typeFilter, platformFilter].forEach(function (filter) {
+  [categoryFilter, typeFilter, platformFilter, audienceFilter].forEach(function (filter) {
     if (filter) filter.addEventListener("change", function () { applyFilters(false); });
   });
 
@@ -238,6 +241,7 @@
       if (categoryFilter) categoryFilter.value = "";
       if (typeFilter) typeFilter.value = "";
       if (platformFilter) platformFilter.value = "";
+      if (audienceFilter) audienceFilter.value = "";
       applyFilters(true);
       if (searchInput) searchInput.focus();
     });

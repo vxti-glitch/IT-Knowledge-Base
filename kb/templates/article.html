@@ -14,14 +14,18 @@
       <span class="kb-id">{{ article.kb_id }}</span>
       <span class="risk risk-{{ article.risk|lower }}">{{ article.risk }} risk</span>
       <span>{{ article.support_tier }}</span>
+      <span>{{ article.audience }}</span>
+      <span>{{ article.difficulty }}</span>
     </div>
   </header>
 
   <dl class="metadata-grid">
     <div><dt>Author</dt><dd>{{ article.author }}</dd></div>
     <div><dt>Last updated</dt><dd>{{ article.last_updated_display }}</dd></div>
+    <div><dt>Last reviewed</dt><dd>{{ article.reviewed_on_display }}</dd></div>
     <div><dt>Platforms</dt><dd>{{ article.platforms|join(', ') }}</dd></div>
-    <div><dt>Access</dt><dd>Internal training article</dd></div>
+    <div><dt>Content type</dt><dd>{{ article.content_type }}</dd></div>
+    <div><dt>Review state</dt><dd>{{ article.review_state }}</dd></div>
     <div><dt>Version</dt><dd>{{ build_version }}</dd></div>
     <div><dt>Source</dt><dd><a href="https://github.com/vxti-glitch/IT-Knowledge-Base/blob/main/docs/{{ article.source_path }}">View Markdown</a></dd></div>
   </dl>

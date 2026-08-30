@@ -50,6 +50,9 @@ def build_site(docs_dir: Path, output_dir: Path) -> dict:
             "title": article["title"],
             "category": article["category"],
             "article_type": article["article_type"],
+            "content_type": article["content_type"],
+            "audience": article["audience"],
+            "difficulty": article["difficulty"],
             "platforms": article["platforms"],
             "tags": article["tags"],
             "kb_id": article["kb_id"],
@@ -77,6 +80,7 @@ def build_site(docs_dir: Path, output_dir: Path) -> dict:
             "unique_article_bodies": True,
             "required_metadata": True,
             "required_sections": True,
+            "review_metadata": True,
             "normalized_tags": True,
         },
     }

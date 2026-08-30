@@ -14,6 +14,13 @@
   </div>
 </section>
 
+<nav class="library-paths" aria-label="Recommended knowledge-base paths">
+  <a href="index.html?q=first-contact"><strong>Start here</strong><span>Run a safe first-contact triage</span></a>
+  <a href="index.html?q=symptom"><strong>Browse by symptom</strong><span>Begin with the user's wording</span></a>
+  <a href="index.html?q=checklist"><strong>Technician checklists</strong><span>Prepare, verify, and hand off</span></a>
+  <a href="index.html?q=command"><strong>Commands and references</strong><span>Know what each check proves</span></a>
+</nav>
+
 <section class="filter-panel" aria-label="Article filters">
   <div class="filter-heading">
     <div>
@@ -41,6 +48,14 @@
         {% for value in platforms %}<option value="{{ value }}">{{ value }}</option>{% endfor %}
       </select>
     </label>
+    <label>Audience
+      <select id="filter-audience">
+        <option value="">All audiences</option>
+        <option value="Technician">Technician</option>
+        <option value="End User">End user</option>
+        <option value="Technician and End User">Technician and end user</option>
+      </select>
+    </label>
   </div>
 </section>
 
@@ -61,6 +76,7 @@
          data-category="{{ item.category }}"
          data-type="{{ item.article_type }}"
          data-platforms="{{ item.platforms|join('|') }}"
+         data-audience="{{ item.audience }}"
          data-search="{{ item.title }} {{ item.kb_id }} {{ item.tags|join(' ') }} {{ item.excerpt }}">
         <div class="card-topline">
           <span class="kb-id">{{ item.kb_id }}</span>
@@ -71,6 +87,7 @@
         <div class="card-meta">
           <span>{{ item.article_type }}</span>
           <span>{{ item.support_tier }}</span>
+          <span>{{ item.difficulty }}</span>
         </div>
         <div class="tag-list" aria-label="Tags">
           {% for tag in item.tags[:4] %}<span>{{ tag }}</span>{% endfor %}

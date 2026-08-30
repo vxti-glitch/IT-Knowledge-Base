@@ -177,9 +177,9 @@ class RepositoryQualityTests(unittest.TestCase):
     def test_complete_published_library_passes_quality_gate(self):
         articles = discover_articles(REPO_ROOT / "docs")
 
-        self.assertEqual(len(articles), 20)
-        self.assertEqual(len({article["kb_id"] for article in articles}), 20)
-        self.assertEqual(len({article["content_hash"] for article in articles}), 20)
+        self.assertGreaterEqual(len(articles), 20)
+        self.assertEqual(len({article["kb_id"] for article in articles}), len(articles))
+        self.assertEqual(len({article["content_hash"] for article in articles}), len(articles))
         self.assertTrue(
             all(article["author"] == "Tier 1 Support Lab" for article in articles)
         )
@@ -189,16 +189,16 @@ class RepositoryQualityTests(unittest.TestCase):
             output = Path(temp_dir) / "site"
             report = build_site(REPO_ROOT / "docs", output)
 
-            self.assertEqual(report["article_count"], 20)
+            self.assertGreaterEqual(report["article_count"], 20)
             self.assertTrue((output / "index.html").is_file())
             self.assertTrue((output / "assets" / "site.css").is_file())
             self.assertTrue((output / "assets" / "site.js").is_file())
-            self.assertEqual(len(list(output.glob("*.html"))), 21)
+            self.assertEqual(len(list(output.glob("*.html"))), report["article_count"] + 1)
 
             search_index = json.loads(
                 (output / "search-index.json").read_text(encoding="utf-8")
             )
-            self.assertEqual(len(search_index), 20)
+            self.assertEqual(len(search_index), report["article_count"])
             self.assertTrue(all(record["plain_text"] for record in search_index))
 
             html = (output / "index.html").read_text(encoding="utf-8")

@@ -9,7 +9,7 @@
 
 > **SIMULATED PORTFOLIO PROJECT:** The organizations, users, devices, incidents, and support procedures in this repository are fictional. The material demonstrates documentation and troubleshooting practices; it is not production documentation, an employment record, or a claim of live enterprise administration. Validate commands, permissions, and current vendor guidance before real-world use.
 
-A searchable IT-support documentation lab built for remote Tier 1, help-desk, desktop-support, and technical-support portfolios. Twenty focused articles are compiled from Markdown into a responsive static website, validated by automated content tests, and deployed through GitHub Actions.
+A searchable IT-support documentation lab built for remote Tier 1, help-desk, desktop-support, and technical-support portfolios. Thirty-eight focused articles are compiled from Markdown into a responsive static website, validated by automated content tests, and deployed through GitHub Actions.
 
 ![Knowledge base homepage with support domains and article cards](.github/assets/knowledge-base-home.png)
 
@@ -17,7 +17,7 @@ A searchable IT-support documentation lab built for remote Tier 1, help-desk, de
 
 1. [Open the live knowledge base](https://vxti-glitch.github.io/IT-Knowledge-Base/).
 2. Search for `BitLocker`, `account lockout`, `print queue`, or `VPN`.
-3. Filter the library by support domain, article type, or platform.
+3. Filter the library by support domain, article type, platform, or audience.
 4. Open an article and review its safety boundary, evidence collection, validation, ticket note, escalation criteria, and official references.
 5. Copy the simulated ticket note, record browser-only article feedback, and follow the related-article suggestions.
 6. Review the [automated tests](tests/test_kb.py) and [Pages deployment workflow](.github/workflows/pages.yml).
@@ -38,6 +38,7 @@ A searchable IT-support documentation lab built for remote Tier 1, help-desk, de
 
 | Domain | Examples |
 |---|---|
+| Start Here | First-contact triage, symptom routing, command reference |
 | Identity & Access | AD account lockouts, password/MFA reset, unfamiliar MFA prompts |
 | Microsoft 365 | Outlook profiles, Teams reset, OneDrive sync, shared mailboxes |
 | Windows Endpoint | BitLocker recovery, performance triage, software installation controls |
@@ -46,8 +47,10 @@ A searchable IT-support documentation lab built for remote Tier 1, help-desk, de
 | User Lifecycle | Controlled onboarding and offboarding |
 | Security & Escalation | Phishing intake and lost-device response |
 | Support Operations | Safe, clear remote-support sessions |
+| Hardware & Peripherals | Displays, docks, audio, microphones, USB devices |
+| Accessibility | Consent-centered assistive-technology support |
 
-The published library intentionally favors 20 specific, interview-ready articles over a larger collection of repetitive or unverified material.
+The published library intentionally favors 38 specific, interview-ready articles over a larger collection of repetitive or unverified material. Troubleshooting, how-to, checklist, quick-reference, concept, and security-response archetypes keep the structure appropriate to the task while preserving safety and validation standards.
 
 ## Screenshots
 
@@ -67,6 +70,9 @@ IT-Knowledge-Base/
 │       ├── ci.yml                 # Validate, test, and build every change
 │       └── pages.yml              # Deploy validated output to GitHub Pages
 ├── docs/                          # Published Markdown source
+│   ├── start-here/
+│   ├── accessibility/
+│   ├── hardware-peripherals/
 │   ├── identity-access/
 │   ├── microsoft-365/
 │   ├── networking-vpn/

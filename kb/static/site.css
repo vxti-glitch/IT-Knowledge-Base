@@ -485,6 +485,27 @@ a:focus-visible {
   background: var(--panel);
 }
 
+.library-paths {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 24px 0 0;
+}
+
+.library-paths a {
+  display: grid;
+  gap: 5px;
+  padding: 17px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--panel);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.library-paths a:hover { border-color: var(--accent); transform: translateY(-2px); }
+.library-paths span { color: var(--muted); font-size: .78rem; }
+
 .filter-heading {
   display: flex;
   justify-content: space-between;
@@ -515,7 +536,7 @@ a:focus-visible {
 
 .filters {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
 }
 
@@ -1069,6 +1090,7 @@ a:focus-visible {
   }
 
   .hero-stats,
+  .library-paths,
   .filters,
   .article-grid,
   .metadata-grid {

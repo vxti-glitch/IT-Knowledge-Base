@@ -14,12 +14,17 @@ from markdown.extensions.tables import TableExtension
 from markdown.extensions.toc import TocExtension
 
 from .config import (
+    AUDIENCES,
+    ARCHETYPE_SECTIONS,
     ARTICLE_TYPES,
     CATEGORY_META,
     CATEGORY_ORDER,
+    DIFFICULTIES,
+    OPTIONAL_METADATA_DEFAULTS,
     REQUIRED_FIELDS,
     REQUIRED_SECTIONS,
     RISK_LEVELS,
+    REVIEW_STATES,
     TAG_ALIASES,
 )
 
@@ -154,13 +159,25 @@ def _validate_article(
     if metadata.get("last_updated") and not _iso_date(metadata["last_updated"]):
         errors.append(f"{relative}: last_updated must use YYYY-MM-DD")
 
+    reviewed_on = metadata.get("reviewed_on", metadata.get("last_updated"))
+    if reviewed_on and not _iso_date(reviewed_on):
+        errors.append(f"{relative}: reviewed_on must use YYYY-MM-DD")
+    if metadata.get("audience", OPTIONAL_METADATA_DEFAULTS["audience"]) not in AUDIENCES:
+        errors.append(f"{relative}: unsupported audience '{metadata.get('audience')}'")
+    if metadata.get("difficulty", OPTIONAL_METADATA_DEFAULTS["difficulty"]) not in DIFFICULTIES:
+        errors.append(f"{relative}: unsupported difficulty '{metadata.get('difficulty')}'")
+    if metadata.get("review_state", OPTIONAL_METADATA_DEFAULTS["review_state"]) not in REVIEW_STATES:
+        errors.append(f"{relative}: unsupported review_state '{metadata.get('review_state')}'")
+
     if len(_normalize_tags(metadata.get("tags"))) < 2:
         errors.append(f"{relative}: include at least two normalized tags")
     if not _string_list(metadata.get("platforms")):
         errors.append(f"{relative}: include at least one platform")
 
     headings = _section_names(content)
-    for section in REQUIRED_SECTIONS:
+    content_type = str(metadata.get("content_type", "Troubleshooting")).strip()
+    required_sections = ARCHETYPE_SECTIONS.get(content_type, REQUIRED_SECTIONS)
+    for section in required_sections:
         if section.casefold() not in headings:
             errors.append(f"{relative}: missing section '## {section}'")
 
@@ -187,6 +204,9 @@ def parse_markdown_file(filepath: Path, docs_dir: Path | None = None) -> dict:
         ) from exc
 
     metadata = dict(post.metadata)
+    for field, default in OPTIONAL_METADATA_DEFAULTS.items():
+        metadata.setdefault(field, default.copy() if isinstance(default, list) else default)
+    metadata.setdefault("reviewed_on", metadata.get("last_updated"))
     errors = _validate_article(filepath, docs_root, metadata, post.content)
     if errors:
         raise ArticleValidationError(errors)
@@ -195,6 +215,8 @@ def parse_markdown_file(filepath: Path, docs_dir: Path | None = None) -> dict:
     platforms = _string_list(metadata["platforms"])
     updated_iso = _iso_date(metadata["last_updated"])
     updated_display = date.fromisoformat(updated_iso).strftime("%B %d, %Y")
+    reviewed_iso = _iso_date(metadata["reviewed_on"])
+    reviewed_display = date.fromisoformat(reviewed_iso).strftime("%B %d, %Y")
 
     md = markdown.Markdown(
         extensions=[
@@ -246,11 +268,18 @@ def parse_markdown_file(filepath: Path, docs_dir: Path | None = None) -> dict:
         "article_type": str(metadata["article_type"]).strip(),
         "last_updated": updated_iso,
         "last_updated_display": updated_display,
+        "reviewed_on": reviewed_iso,
+        "reviewed_on_display": reviewed_display,
         "kb_id": str(metadata["kb_id"]).strip(),
         "tags": tags,
         "platforms": platforms,
         "support_tier": str(metadata["support_tier"]).strip(),
         "risk": str(metadata["risk"]).strip(),
+        "audience": str(metadata["audience"]).strip(),
+        "difficulty": str(metadata["difficulty"]).strip(),
+        "prerequisites": _string_list(metadata["prerequisites"]),
+        "content_type": str(metadata["content_type"]).strip(),
+        "review_state": str(metadata["review_state"]).strip(),
         "body_html": body_html,
         "toc": toc_html,
         "plain_text": plain_text,
@@ -298,3 +327,5 @@ def discover_articles(docs_dir: Path) -> list[dict]:
         key=lambda article: (rank[article["category"]], article["title"].casefold())
     )
     return articles
+    DIFFICULTIES,
+    OPTIONAL_METADATA_DEFAULTS,

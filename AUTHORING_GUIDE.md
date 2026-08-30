@@ -12,7 +12,13 @@ title: "Specific user-visible issue or support action"
 author: "Tier 1 Support Lab"
 category: "Windows Endpoint"
 article_type: "FAQ"
+content_type: "Troubleshooting"
 last_updated: "2026-08-26"
+reviewed_on: "2026-08-26"
+review_state: "Validated"
+audience: "Technician"
+difficulty: "Foundational"
+prerequisites: ["Authorized support context"]
 kb_id: "KB-WINDOWS-004"
 tags: ["Windows 11", "Troubleshooting"]
 platforms: ["Windows 11"]
@@ -61,6 +67,8 @@ Define the Tier 1 boundary and the evidence the next resolver needs.
 - [Official vendor documentation](https://example.test/)
 ```
 
+The example above is the **Troubleshooting** archetype. Other validated archetypes are **How-To**, **Checklist**, **Quick Reference**, **Concept**, and **Security Response**. Use the structure that makes the content easiest to follow; the validator still enforces safety, expected results or validation, ownership boundaries, references, and a reusable handoff when appropriate.
+
 ## Supported metadata
 
 | Field | Rule |
@@ -68,8 +76,14 @@ Define the Tier 1 boundary and the evidence the next resolver needs.
 | `title` | Specific and user-focused |
 | `author` | `Tier 1 Support Lab` for the simulated library |
 | `category` | Must match a configured support domain and folder |
-| `article_type` | `FAQ`, `How-To`, or `Runbook` |
+| `article_type` | Display label: `FAQ`, `How-To`, `Runbook`, `Troubleshooting`, `Checklist`, `Quick Reference`, `Concept`, or `Security Response` |
+| `content_type` | Validated archetype controlling the required section structure |
 | `last_updated` | ISO `YYYY-MM-DD` |
+| `reviewed_on` | Date the technical sources and procedure were reviewed |
+| `review_state` | `Validated`, `Review Needed`, or `Archived` |
+| `audience` | `Technician`, `End User`, or `Technician and End User` |
+| `difficulty` | `Foundational`, `Intermediate`, or `Advanced` |
+| `prerequisites` | Access, authorization, tools, or prior knowledge needed |
 | `kb_id` | Unique `KB-DOMAIN-###` value |
 | `tags` | At least two normalized terms |
 | `platforms` | At least one supported platform |
