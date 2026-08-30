@@ -179,7 +179,9 @@ class RepositoryQualityTests(unittest.TestCase):
 
         self.assertGreaterEqual(len(articles), 20)
         self.assertEqual(len({article["kb_id"] for article in articles}), len(articles))
-        self.assertEqual(len({article["content_hash"] for article in articles}), len(articles))
+        self.assertEqual(
+            len({article["content_hash"] for article in articles}), len(articles)
+        )
         self.assertTrue(
             all(article["author"] == "Tier 1 Support Lab" for article in articles)
         )
@@ -193,7 +195,9 @@ class RepositoryQualityTests(unittest.TestCase):
             self.assertTrue((output / "index.html").is_file())
             self.assertTrue((output / "assets" / "site.css").is_file())
             self.assertTrue((output / "assets" / "site.js").is_file())
-            self.assertEqual(len(list(output.glob("*.html"))), report["article_count"] + 1)
+            self.assertEqual(
+                len(list(output.glob("*.html"))), report["article_count"] + 1
+            )
 
             search_index = json.loads(
                 (output / "search-index.json").read_text(encoding="utf-8")

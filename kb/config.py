@@ -74,7 +74,16 @@ CATEGORY_META = {
     },
 }
 
-ARTICLE_TYPES = ("FAQ", "How-To", "Runbook", "Troubleshooting", "Checklist", "Quick Reference", "Concept", "Security Response")
+ARTICLE_TYPES = (
+    "FAQ",
+    "How-To",
+    "Runbook",
+    "Troubleshooting",
+    "Checklist",
+    "Quick Reference",
+    "Concept",
+    "Security Response",
+)
 RISK_LEVELS = ("Low", "Moderate", "High")
 AUDIENCES = ("Technician", "End User", "Technician and End User")
 DIFFICULTIES = ("Foundational", "Intermediate", "Advanced")
@@ -116,11 +125,55 @@ REQUIRED_SECTIONS = (
 
 ARCHETYPE_SECTIONS = {
     "Troubleshooting": REQUIRED_SECTIONS,
-    "How-To": ("Summary", "Scope and safety", "Prerequisites", "Procedure", "Expected result", "Recovery or rollback", "Ticket note example", "Escalation criteria", "References"),
-    "Checklist": ("Summary", "Scope and safety", "Checklist", "Completion evidence", "Exceptions and escalation", "Ticket note example", "References"),
-    "Quick Reference": ("Summary", "Scope and safety", "Reference", "Interpretation", "Common mistakes", "Ticket note example", "Escalation criteria", "References"),
-    "Concept": ("Summary", "Why support cares", "Core concepts", "Examples and boundaries", "Related procedures", "References"),
-    "Security Response": ("Summary", "Scope and safety", "Indicators", "Immediate safe action", "Evidence to preserve", "Do not", "Escalation criteria", "Ticket note example", "References"),
+    "How-To": (
+        "Summary",
+        "Scope and safety",
+        "Prerequisites",
+        "Procedure",
+        "Expected result",
+        "Recovery or rollback",
+        "Ticket note example",
+        "Escalation criteria",
+        "References",
+    ),
+    "Checklist": (
+        "Summary",
+        "Scope and safety",
+        "Checklist",
+        "Completion evidence",
+        "Exceptions and escalation",
+        "Ticket note example",
+        "References",
+    ),
+    "Quick Reference": (
+        "Summary",
+        "Scope and safety",
+        "Reference",
+        "Interpretation",
+        "Common mistakes",
+        "Ticket note example",
+        "Escalation criteria",
+        "References",
+    ),
+    "Concept": (
+        "Summary",
+        "Why support cares",
+        "Core concepts",
+        "Examples and boundaries",
+        "Related procedures",
+        "References",
+    ),
+    "Security Response": (
+        "Summary",
+        "Scope and safety",
+        "Indicators",
+        "Immediate safe action",
+        "Evidence to preserve",
+        "Do not",
+        "Escalation criteria",
+        "Ticket note example",
+        "References",
+    ),
 }
 
 TAG_ALIASES = {

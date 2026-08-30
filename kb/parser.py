@@ -14,17 +14,17 @@ from markdown.extensions.tables import TableExtension
 from markdown.extensions.toc import TocExtension
 
 from .config import (
-    AUDIENCES,
     ARCHETYPE_SECTIONS,
     ARTICLE_TYPES,
+    AUDIENCES,
     CATEGORY_META,
     CATEGORY_ORDER,
     DIFFICULTIES,
     OPTIONAL_METADATA_DEFAULTS,
     REQUIRED_FIELDS,
     REQUIRED_SECTIONS,
-    RISK_LEVELS,
     REVIEW_STATES,
+    RISK_LEVELS,
     TAG_ALIASES,
 )
 
@@ -162,12 +162,25 @@ def _validate_article(
     reviewed_on = metadata.get("reviewed_on", metadata.get("last_updated"))
     if reviewed_on and not _iso_date(reviewed_on):
         errors.append(f"{relative}: reviewed_on must use YYYY-MM-DD")
-    if metadata.get("audience", OPTIONAL_METADATA_DEFAULTS["audience"]) not in AUDIENCES:
+    if (
+        metadata.get("audience", OPTIONAL_METADATA_DEFAULTS["audience"])
+        not in AUDIENCES
+    ):
         errors.append(f"{relative}: unsupported audience '{metadata.get('audience')}'")
-    if metadata.get("difficulty", OPTIONAL_METADATA_DEFAULTS["difficulty"]) not in DIFFICULTIES:
-        errors.append(f"{relative}: unsupported difficulty '{metadata.get('difficulty')}'")
-    if metadata.get("review_state", OPTIONAL_METADATA_DEFAULTS["review_state"]) not in REVIEW_STATES:
-        errors.append(f"{relative}: unsupported review_state '{metadata.get('review_state')}'")
+    if (
+        metadata.get("difficulty", OPTIONAL_METADATA_DEFAULTS["difficulty"])
+        not in DIFFICULTIES
+    ):
+        errors.append(
+            f"{relative}: unsupported difficulty '{metadata.get('difficulty')}'"
+        )
+    if (
+        metadata.get("review_state", OPTIONAL_METADATA_DEFAULTS["review_state"])
+        not in REVIEW_STATES
+    ):
+        errors.append(
+            f"{relative}: unsupported review_state '{metadata.get('review_state')}'"
+        )
 
     if len(_normalize_tags(metadata.get("tags"))) < 2:
         errors.append(f"{relative}: include at least two normalized tags")
@@ -205,7 +218,9 @@ def parse_markdown_file(filepath: Path, docs_dir: Path | None = None) -> dict:
 
     metadata = dict(post.metadata)
     for field, default in OPTIONAL_METADATA_DEFAULTS.items():
-        metadata.setdefault(field, default.copy() if isinstance(default, list) else default)
+        metadata.setdefault(
+            field, default.copy() if isinstance(default, list) else default
+        )
     metadata.setdefault("reviewed_on", metadata.get("last_updated"))
     errors = _validate_article(filepath, docs_root, metadata, post.content)
     if errors:
@@ -327,5 +342,3 @@ def discover_articles(docs_dir: Path) -> list[dict]:
         key=lambda article: (rank[article["category"]], article["title"].casefold())
     )
     return articles
-    DIFFICULTIES,
-    OPTIONAL_METADATA_DEFAULTS,
