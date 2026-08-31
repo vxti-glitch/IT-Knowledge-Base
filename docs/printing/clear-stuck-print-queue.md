@@ -4,6 +4,7 @@ author: "Tier 1 Support Lab"
 category: "Printing"
 article_type: "How-To"
 last_updated: "2026-08-26"
+evidence_status: "concept_reviewed"
 kb_id: "KB-PRINT-002"
 tags: ["Windows 11", "Printing", "Print Spooler", "Queue"]
 platforms: ["Windows 11"]

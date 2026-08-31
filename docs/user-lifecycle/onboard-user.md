@@ -4,6 +4,7 @@ author: "Tier 1 Support Lab"
 category: "User Lifecycle"
 article_type: "Runbook"
 last_updated: "2026-08-26"
+evidence_status: "concept_reviewed"
 kb_id: "KB-LIFECYCLE-001"
 tags: ["Onboarding", "Active Directory", "Microsoft 365", "Licensing"]
 platforms: ["Active Directory", "Microsoft 365", "Windows 11"]

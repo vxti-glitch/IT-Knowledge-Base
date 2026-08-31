@@ -4,6 +4,7 @@ author: "Tier 1 Support Lab"
 category: "Windows Endpoint"
 article_type: "Runbook"
 last_updated: "2026-08-26"
+evidence_status: "concept_reviewed"
 kb_id: "KB-WINDOWS-001"
 tags: ["Windows 11", "BitLocker", "Recovery Key", "Encryption"]
 platforms: ["Windows 11", "Microsoft Entra ID"]

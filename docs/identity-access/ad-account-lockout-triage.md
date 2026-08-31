@@ -4,6 +4,7 @@ author: "Tier 1 Support Lab"
 category: "Identity & Access"
 article_type: "Runbook"
 last_updated: "2026-08-26"
+evidence_status: "concept_reviewed"
 kb_id: "KB-IDENTITY-001"
 tags: ["Active Directory", "Account Lockout", "Authentication", "Remote Support"]
 platforms: ["Windows 11", "Active Directory"]

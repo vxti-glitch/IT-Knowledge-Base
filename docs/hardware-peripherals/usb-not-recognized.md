@@ -6,7 +6,7 @@ article_type: "Troubleshooting"
 content_type: "Troubleshooting"
 last_updated: "2026-08-30"
 reviewed_on: "2026-08-30"
-review_state: "Validated"
+evidence_status: "concept_reviewed"
 audience: "Technician"
 difficulty: "Foundational"
 prerequisites: ["Approved peripheral", "Known-good port/device when available"]

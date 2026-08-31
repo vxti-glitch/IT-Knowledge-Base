@@ -4,6 +4,7 @@ author: "Tier 1 Support Lab"
 category: "Identity & Access"
 article_type: "How-To"
 last_updated: "2026-08-26"
+evidence_status: "concept_reviewed"
 kb_id: "KB-IDENTITY-002"
 tags: ["Microsoft 365", "Entra ID", "Password Reset", "MFA"]
 platforms: ["Microsoft 365", "Microsoft Entra ID"]

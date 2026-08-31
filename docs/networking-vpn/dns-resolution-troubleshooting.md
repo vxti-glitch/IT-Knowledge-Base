@@ -4,6 +4,7 @@ author: "Tier 1 Support Lab"
 category: "Networking & VPN"
 article_type: "How-To"
 last_updated: "2026-08-26"
+evidence_status: "concept_reviewed"
 kb_id: "KB-NETWORK-003"
 tags: ["DNS", "Windows 11", "Name Resolution", "Networking"]
 platforms: ["Windows 11", "DNS"]

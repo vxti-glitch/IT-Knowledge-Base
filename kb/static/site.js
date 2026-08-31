@@ -131,6 +131,7 @@
   const typeFilter = document.getElementById("filter-type");
   const platformFilter = document.getElementById("filter-platform");
   const audienceFilter = document.getElementById("filter-audience");
+  const evidenceFilter = document.getElementById("filter-evidence");
   const resetFilters = document.getElementById("reset-filters");
   const searchRecords = new Map();
 
@@ -174,6 +175,7 @@
     const articleType = selectedValue(typeFilter);
     const platform = selectedValue(platformFilter);
     const audience = selectedValue(audienceFilter);
+    const evidence = selectedValue(evidenceFilter);
     let visible = 0;
 
     cards.forEach(function (card) {
@@ -184,7 +186,8 @@
       const platforms = (card.dataset.platforms || "").split("|");
       const platformMatch = !platform || platforms.includes(platform);
       const audienceMatch = !audience || card.dataset.audience === audience;
-      const show = queryMatch && categoryMatch && typeMatch && platformMatch && audienceMatch;
+      const evidenceMatch = !evidence || card.dataset.evidence === evidence;
+      const show = queryMatch && categoryMatch && typeMatch && platformMatch && audienceMatch && evidenceMatch;
       card.hidden = !show;
       if (show) visible += 1;
     });
@@ -195,7 +198,7 @@
       });
     });
 
-    const active = Boolean(query || category || articleType || platform || audience);
+    const active = Boolean(query || category || articleType || platform || audience || evidence);
     if (resultsCount) {
       resultsCount.textContent = active
         ? visible + " of " + cards.length + " articles"
@@ -231,7 +234,7 @@
     });
   }
 
-  [categoryFilter, typeFilter, platformFilter, audienceFilter].forEach(function (filter) {
+  [categoryFilter, typeFilter, platformFilter, audienceFilter, evidenceFilter].forEach(function (filter) {
     if (filter) filter.addEventListener("change", function () { applyFilters(false); });
   });
 
@@ -242,6 +245,7 @@
       if (typeFilter) typeFilter.value = "";
       if (platformFilter) platformFilter.value = "";
       if (audienceFilter) audienceFilter.value = "";
+      if (evidenceFilter) evidenceFilter.value = "";
       applyFilters(true);
       if (searchInput) searchInput.focus();
     });

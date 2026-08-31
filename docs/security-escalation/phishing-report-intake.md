@@ -4,6 +4,7 @@ author: "Tier 1 Support Lab"
 category: "Security & Escalation"
 article_type: "Runbook"
 last_updated: "2026-08-26"
+evidence_status: "concept_reviewed"
 kb_id: "KB-SECURITY-001"
 tags: ["Phishing", "Email Security", "Incident Intake", "Escalation"]
 platforms: ["Microsoft 365", "Outlook"]

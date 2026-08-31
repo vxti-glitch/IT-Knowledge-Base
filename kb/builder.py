@@ -53,6 +53,8 @@ def build_site(docs_dir: Path, output_dir: Path) -> dict:
             "content_type": article["content_type"],
             "audience": article["audience"],
             "difficulty": article["difficulty"],
+            "evidence_status": article["evidence_status"],
+            "evidence_status_label": article["evidence_status_label"],
             "platforms": article["platforms"],
             "tags": article["tags"],
             "kb_id": article["kb_id"],
@@ -75,12 +77,15 @@ def build_site(docs_dir: Path, output_dir: Path) -> dict:
         "article_type_counts": dict(
             Counter(article["article_type"] for article in articles)
         ),
+        "evidence_status_counts": dict(
+            Counter(article["evidence_status"] for article in articles)
+        ),
         "quality_gate": {
             "unique_kb_ids": True,
             "unique_article_bodies": True,
             "required_metadata": True,
             "required_sections": True,
-            "review_metadata": True,
+            "evidence_metadata": True,
             "normalized_tags": True,
         },
     }
@@ -88,5 +93,5 @@ def build_site(docs_dir: Path, output_dir: Path) -> dict:
         json.dumps(report, indent=2), encoding="utf-8"
     )
 
-    print(f"Built {len(articles)} validated articles in '{output_dir}'.")
+    print(f"Built {len(articles)} articles that passed content checks in '{output_dir}'.")
     return report

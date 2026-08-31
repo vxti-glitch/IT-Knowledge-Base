@@ -4,6 +4,7 @@ author: "Tier 1 Support Lab"
 category: "Networking & VPN"
 article_type: "FAQ"
 last_updated: "2026-08-26"
+evidence_status: "concept_reviewed"
 kb_id: "KB-NETWORK-002"
 tags: ["Wi-Fi", "Windows 11", "Wireless", "Remote Work"]
 platforms: ["Windows 11", "Wireless Network"]

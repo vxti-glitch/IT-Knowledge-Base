@@ -4,6 +4,7 @@ author: "Tier 1 Support Lab"
 category: "User Lifecycle"
 article_type: "Runbook"
 last_updated: "2026-08-26"
+evidence_status: "concept_reviewed"
 kb_id: "KB-LIFECYCLE-002"
 tags: ["Offboarding", "Microsoft 365", "Access Removal", "Data Retention"]
 platforms: ["Microsoft 365", "Microsoft Entra ID", "Active Directory"]
