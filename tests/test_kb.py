@@ -197,9 +197,7 @@ class RepositoryQualityTests(unittest.TestCase):
             report = build_site(REPO_ROOT / "docs", output)
 
             self.assertEqual(report["article_count"], 38)
-            self.assertEqual(
-                report["evidence_status_counts"], {"concept_reviewed": 38}
-            )
+            self.assertEqual(report["evidence_status_counts"], {"concept_reviewed": 38})
             self.assertTrue((output / "index.html").is_file())
             self.assertTrue((output / "assets" / "site.css").is_file())
             self.assertTrue((output / "assets" / "site.js").is_file())

@@ -93,5 +93,7 @@ def build_site(docs_dir: Path, output_dir: Path) -> dict:
         json.dumps(report, indent=2), encoding="utf-8"
     )
 
-    print(f"Built {len(articles)} articles that passed content checks in '{output_dir}'.")
+    print(
+        f"Built {len(articles)} articles that passed content checks in '{output_dir}'."
+    )
     return report
