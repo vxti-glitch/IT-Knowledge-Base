@@ -6,7 +6,7 @@ article_type: "Concept"
 content_type: "Concept"
 last_updated: "2026-08-30"
 reviewed_on: "2026-08-30"
-review_state: "Validated"
+evidence_status: "concept_reviewed"
 audience: "Technician"
 difficulty: "Intermediate"
 prerequisites: ["Basic Windows sign-in knowledge"]

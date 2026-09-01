@@ -4,6 +4,7 @@ author: "Tier 1 Support Lab"
 category: "Microsoft 365"
 article_type: "FAQ"
 last_updated: "2026-08-26"
+evidence_status: "concept_reviewed"
 kb_id: "KB-M365-003"
 tags: ["OneDrive", "Microsoft 365", "File Sync", "Remote Support"]
 platforms: ["Windows 11", "OneDrive"]

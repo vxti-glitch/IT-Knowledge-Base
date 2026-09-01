@@ -4,6 +4,7 @@ author: "Tier 1 Support Lab"
 category: "Identity & Access"
 article_type: "Runbook"
 last_updated: "2026-08-26"
+evidence_status: "concept_reviewed"
 kb_id: "KB-IDENTITY-003"
 tags: ["MFA", "Microsoft Entra ID", "Account Security", "Escalation"]
 platforms: ["Microsoft 365", "Microsoft Entra ID"]

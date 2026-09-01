@@ -4,6 +4,7 @@ author: "Tier 1 Support Lab"
 category: "Microsoft 365"
 article_type: "How-To"
 last_updated: "2026-08-26"
+evidence_status: "concept_reviewed"
 kb_id: "KB-M365-004"
 tags: ["Outlook", "Shared Mailbox", "Exchange Online", "Permissions"]
 platforms: ["Microsoft 365", "Outlook"]

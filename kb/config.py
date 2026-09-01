@@ -1,6 +1,6 @@
 SITE_TITLE = "IT Support Knowledge Base Lab"
 SITE_SUBTITLE = "Simulated Tier 1 troubleshooting and runbooks"
-BUILD_VERSION = "3.0.0"
+BUILD_VERSION = "3.1.0"
 
 CATEGORY_ORDER = [
     "Start Here",
@@ -87,7 +87,20 @@ ARTICLE_TYPES = (
 RISK_LEVELS = ("Low", "Moderate", "High")
 AUDIENCES = ("Technician", "End User", "Technician and End User")
 DIFFICULTIES = ("Foundational", "Intermediate", "Advanced")
-REVIEW_STATES = ("Validated", "Review Needed", "Archived")
+EVIDENCE_STATUSES = (
+    "concept_reviewed",
+    "vendor_source_checked",
+    "lab_executed",
+    "needs_review",
+    "archived",
+)
+EVIDENCE_STATUS_LABELS = {
+    "concept_reviewed": "Concept reviewed",
+    "vendor_source_checked": "Vendor source checked",
+    "lab_executed": "Lab executed",
+    "needs_review": "Needs review",
+    "archived": "Archived",
+}
 
 REQUIRED_FIELDS = (
     "title",
@@ -100,6 +113,7 @@ REQUIRED_FIELDS = (
     "platforms",
     "support_tier",
     "risk",
+    "evidence_status",
 )
 
 OPTIONAL_METADATA_DEFAULTS = {
@@ -107,7 +121,6 @@ OPTIONAL_METADATA_DEFAULTS = {
     "difficulty": "Foundational",
     "prerequisites": ["Authorized support context"],
     "content_type": "Troubleshooting",
-    "review_state": "Validated",
 }
 
 REQUIRED_SECTIONS = (

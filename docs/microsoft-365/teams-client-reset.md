@@ -4,6 +4,7 @@ author: "Tier 1 Support Lab"
 category: "Microsoft 365"
 article_type: "How-To"
 last_updated: "2026-08-26"
+evidence_status: "concept_reviewed"
 kb_id: "KB-M365-002"
 tags: ["Microsoft Teams", "Microsoft 365", "Cache", "Sign-in"]
 platforms: ["Windows 11", "Microsoft Teams"]

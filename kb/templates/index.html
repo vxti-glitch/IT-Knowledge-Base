@@ -10,7 +10,7 @@
   <div class="hero-stats" aria-label="Library summary">
     <div><strong>{{ article_count }}</strong><span>published articles</span></div>
     <div><strong>{{ groups|length }}</strong><span>support domains</span></div>
-    <div><strong>100%</strong><span>content-gate pass</span></div>
+    <div><strong>100%</strong><span>content-check pass</span></div>
   </div>
 </section>
 
@@ -56,6 +56,12 @@
         <option value="Technician and End User">Technician and end user</option>
       </select>
     </label>
+    <label>Evidence status
+      <select id="filter-evidence">
+        <option value="">All evidence states</option>
+        {% for value, label in evidence_statuses %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+      </select>
+    </label>
   </div>
 </section>
 
@@ -77,6 +83,7 @@
          data-type="{{ item.article_type }}"
          data-platforms="{{ item.platforms|join('|') }}"
          data-audience="{{ item.audience }}"
+         data-evidence="{{ item.evidence_status }}"
          data-search="{{ item.title }} {{ item.kb_id }} {{ item.tags|join(' ') }} {{ item.excerpt }}">
         <div class="card-topline">
           <span class="kb-id">{{ item.kb_id }}</span>
@@ -88,6 +95,7 @@
           <span>{{ item.article_type }}</span>
           <span>{{ item.support_tier }}</span>
           <span>{{ item.difficulty }}</span>
+          <span>{{ item.evidence_status_label }}</span>
         </div>
         <div class="tag-list" aria-label="Tags">
           {% for tag in item.tags[:4] %}<span>{{ tag }}</span>{% endfor %}

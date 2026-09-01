@@ -4,6 +4,7 @@ author: "Tier 1 Support Lab"
 category: "Windows Endpoint"
 article_type: "FAQ"
 last_updated: "2026-08-26"
+evidence_status: "concept_reviewed"
 kb_id: "KB-WINDOWS-002"
 tags: ["Windows 11", "Performance", "Task Manager", "Disk Space"]
 platforms: ["Windows 11"]

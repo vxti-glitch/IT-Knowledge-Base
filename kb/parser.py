@@ -20,10 +20,11 @@ from .config import (
     CATEGORY_META,
     CATEGORY_ORDER,
     DIFFICULTIES,
+    EVIDENCE_STATUS_LABELS,
+    EVIDENCE_STATUSES,
     OPTIONAL_METADATA_DEFAULTS,
     REQUIRED_FIELDS,
     REQUIRED_SECTIONS,
-    REVIEW_STATES,
     RISK_LEVELS,
     TAG_ALIASES,
 )
@@ -174,12 +175,10 @@ def _validate_article(
         errors.append(
             f"{relative}: unsupported difficulty '{metadata.get('difficulty')}'"
         )
-    if (
-        metadata.get("review_state", OPTIONAL_METADATA_DEFAULTS["review_state"])
-        not in REVIEW_STATES
-    ):
+    if metadata.get("evidence_status") not in EVIDENCE_STATUSES:
         errors.append(
-            f"{relative}: unsupported review_state '{metadata.get('review_state')}'"
+            f"{relative}: unsupported evidence_status "
+            f"'{metadata.get('evidence_status')}'"
         )
 
     if len(_normalize_tags(metadata.get("tags"))) < 2:
@@ -294,7 +293,10 @@ def parse_markdown_file(filepath: Path, docs_dir: Path | None = None) -> dict:
         "difficulty": str(metadata["difficulty"]).strip(),
         "prerequisites": _string_list(metadata["prerequisites"]),
         "content_type": str(metadata["content_type"]).strip(),
-        "review_state": str(metadata["review_state"]).strip(),
+        "evidence_status": str(metadata["evidence_status"]).strip(),
+        "evidence_status_label": EVIDENCE_STATUS_LABELS[
+            str(metadata["evidence_status"]).strip()
+        ],
         "body_html": body_html,
         "toc": toc_html,
         "plain_text": plain_text,

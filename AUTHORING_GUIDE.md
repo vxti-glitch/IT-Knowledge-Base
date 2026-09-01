@@ -2,6 +2,8 @@
 
 This guide defines the publication standard for the simulated IT Support Knowledge Base Lab.
 
+Automated checks establish structure and content consistency, not procedure execution. Read [HOW_THIS_KB_IS_VERIFIED.md](HOW_THIS_KB_IS_VERIFIED.md) before assigning an evidence status.
+
 ## Article template
 
 Create the file under the folder matching its `category`:
@@ -15,7 +17,7 @@ article_type: "FAQ"
 content_type: "Troubleshooting"
 last_updated: "2026-08-26"
 reviewed_on: "2026-08-26"
-review_state: "Validated"
+evidence_status: "concept_reviewed"
 audience: "Technician"
 difficulty: "Foundational"
 prerequisites: ["Authorized support context"]
@@ -67,7 +69,7 @@ Define the Tier 1 boundary and the evidence the next resolver needs.
 - [Official vendor documentation](https://example.test/)
 ```
 
-The example above is the **Troubleshooting** archetype. Other validated archetypes are **How-To**, **Checklist**, **Quick Reference**, **Concept**, and **Security Response**. Use the structure that makes the content easiest to follow; the validator still enforces safety, expected results or validation, ownership boundaries, references, and a reusable handoff when appropriate.
+The example above is the **Troubleshooting** archetype. Other supported archetypes are **How-To**, **Checklist**, **Quick Reference**, **Concept**, and **Security Response**. Use the structure that makes the content easiest to follow; the content checker still enforces safety, expected results or validation, ownership boundaries, references, and a reusable handoff when appropriate.
 
 ## Supported metadata
 
@@ -77,10 +79,10 @@ The example above is the **Troubleshooting** archetype. Other validated archetyp
 | `author` | `Tier 1 Support Lab` for the simulated library |
 | `category` | Must match a configured support domain and folder |
 | `article_type` | Display label: `FAQ`, `How-To`, `Runbook`, `Troubleshooting`, `Checklist`, `Quick Reference`, `Concept`, or `Security Response` |
-| `content_type` | Validated archetype controlling the required section structure |
+| `content_type` | Supported archetype controlling the required section structure |
 | `last_updated` | ISO `YYYY-MM-DD` |
 | `reviewed_on` | Date the technical sources and procedure were reviewed |
-| `review_state` | `Validated`, `Review Needed`, or `Archived` |
+| `evidence_status` | `concept_reviewed`, `vendor_source_checked`, `lab_executed`, `needs_review`, or `archived`; see `HOW_THIS_KB_IS_VERIFIED.md` |
 | `audience` | `Technician`, `End User`, or `Technician and End User` |
 | `difficulty` | `Foundational`, `Intermediate`, or `Advanced` |
 | `prerequisites` | Access, authorization, tools, or prior knowledge needed |
@@ -89,6 +91,8 @@ The example above is the **Troubleshooting** archetype. Other validated archetyp
 | `platforms` | At least one supported platform |
 | `support_tier` | Explicit ownership boundary |
 | `risk` | `Low`, `Moderate`, or `High` |
+
+Do not infer an evidence status from a passing test. Use `concept_reviewed` by default, and promote it only under the documented evidence rules.
 
 ## Writing standard
 

@@ -61,6 +61,7 @@ author: "Tier 1 Support Lab"
 category: "{category}"
 article_type: "How-To"
 last_updated: "2026-08-26"
+evidence_status: "concept_reviewed"
 kb_id: "{kb_id}"
 tags: ["Windows 11", "Troubleshooting"]
 platforms: ["Windows 11"]
@@ -177,7 +178,7 @@ class RepositoryQualityTests(unittest.TestCase):
     def test_complete_published_library_passes_quality_gate(self):
         articles = discover_articles(REPO_ROOT / "docs")
 
-        self.assertGreaterEqual(len(articles), 20)
+        self.assertEqual(len(articles), 38)
         self.assertEqual(len({article["kb_id"] for article in articles}), len(articles))
         self.assertEqual(
             len({article["content_hash"] for article in articles}), len(articles)
@@ -185,13 +186,18 @@ class RepositoryQualityTests(unittest.TestCase):
         self.assertTrue(
             all(article["author"] == "Tier 1 Support Lab" for article in articles)
         )
+        self.assertEqual(
+            {article["evidence_status"] for article in articles},
+            {"concept_reviewed"},
+        )
 
     def test_build_creates_searchable_self_contained_site(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             output = Path(temp_dir) / "site"
             report = build_site(REPO_ROOT / "docs", output)
 
-            self.assertGreaterEqual(report["article_count"], 20)
+            self.assertEqual(report["article_count"], 38)
+            self.assertEqual(report["evidence_status_counts"], {"concept_reviewed": 38})
             self.assertTrue((output / "index.html").is_file())
             self.assertTrue((output / "assets" / "site.css").is_file())
             self.assertTrue((output / "assets" / "site.js").is_file())
@@ -204,11 +210,13 @@ class RepositoryQualityTests(unittest.TestCase):
             )
             self.assertEqual(len(search_index), report["article_count"])
             self.assertTrue(all(record["plain_text"] for record in search_index))
+            self.assertTrue(all(record["evidence_status"] for record in search_index))
 
             html = (output / "index.html").read_text(encoding="utf-8")
             self.assertIn("SIMULATED PORTFOLIO LAB", html)
             self.assertIn('content="index, follow"', html)
             self.assertIn('class="nav-group-button"', html)
+            self.assertIn('id="filter-evidence"', html)
             self.assertNotIn("Internal Use Only", html)
             self.assertNotIn("cdn.jsdelivr.net", html)
             self.assertNotIn("cdnjs.cloudflare.com", html)

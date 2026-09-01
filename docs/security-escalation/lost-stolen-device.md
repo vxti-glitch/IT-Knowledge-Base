@@ -4,6 +4,7 @@ author: "Tier 1 Support Lab"
 category: "Security & Escalation"
 article_type: "Runbook"
 last_updated: "2026-08-26"
+evidence_status: "concept_reviewed"
 kb_id: "KB-SECURITY-002"
 tags: ["Lost Device", "Intune", "Incident Intake", "Data Protection"]
 platforms: ["Windows 11", "Microsoft Intune"]

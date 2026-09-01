@@ -64,6 +64,13 @@ def render_index_page(articles: list[dict], build_ts: str) -> str:
                 key=str.casefold,
             ),
             "category_counts": Counter(article["category"] for article in articles),
+            "evidence_statuses": sorted(
+                {
+                    (article["evidence_status"], article["evidence_status_label"])
+                    for article in articles
+                },
+                key=lambda item: item[1].casefold(),
+            ),
         }
     )
     return _environment().get_template("index.html").render(**context)

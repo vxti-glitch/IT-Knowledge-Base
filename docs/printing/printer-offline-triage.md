@@ -4,6 +4,7 @@ author: "Tier 1 Support Lab"
 category: "Printing"
 article_type: "FAQ"
 last_updated: "2026-08-26"
+evidence_status: "concept_reviewed"
 kb_id: "KB-PRINT-001"
 tags: ["Windows 11", "Printing", "Printer Offline", "TCP/IP"]
 platforms: ["Windows 11", "Network Printer"]

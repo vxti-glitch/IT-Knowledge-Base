@@ -5,11 +5,11 @@
 [![Deploy knowledge base](https://github.com/vxti-glitch/IT-Knowledge-Base/actions/workflows/pages.yml/badge.svg)](https://github.com/vxti-glitch/IT-Knowledge-Base/actions/workflows/pages.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
 
-[Open the live simulated knowledge base](https://vxti-glitch.github.io/IT-Knowledge-Base/) · [Take the 90-second tour](#90-second-tour) · [Browse the source articles](docs) · [Review the quality checks](tests/test_kb.py)
+[Open the live simulated knowledge base](https://vxti-glitch.github.io/IT-Knowledge-Base/) · [Take the 90-second tour](#90-second-tour) · [Browse the source articles](docs) · [Understand the evidence states](HOW_THIS_KB_IS_VERIFIED.md)
 
 > **SIMULATED PORTFOLIO PROJECT:** The organizations, users, devices, incidents, and support procedures in this repository are fictional. The material demonstrates documentation and troubleshooting practices; it is not production documentation, an employment record, or a claim of live enterprise administration. Validate commands, permissions, and current vendor guidance before real-world use.
 
-A searchable IT-support documentation lab built for remote Tier 1, help-desk, desktop-support, and technical-support portfolios. Thirty-eight focused articles are compiled from Markdown into a responsive static website, validated by automated content tests, and deployed through GitHub Actions.
+A searchable IT-support documentation lab built for remote Tier 1, help-desk, desktop-support, and technical-support portfolios. Thirty-eight focused articles are compiled from Markdown into a responsive static website, checked for structural and content requirements, and deployed through GitHub Actions. Each article carries an evidence status so a passing build is never presented as proof that its procedure was executed.
 
 ![Knowledge base homepage with support domains and article cards](.github/assets/knowledge-base-home.png)
 
@@ -17,10 +17,10 @@ A searchable IT-support documentation lab built for remote Tier 1, help-desk, de
 
 1. [Open the live knowledge base](https://vxti-glitch.github.io/IT-Knowledge-Base/).
 2. Search for `BitLocker`, `account lockout`, `print queue`, or `VPN`.
-3. Filter the library by support domain, article type, platform, or audience.
+3. Filter the library by support domain, article type, platform, audience, or evidence status.
 4. Open an article and review its safety boundary, evidence collection, validation, ticket note, escalation criteria, and official references.
 5. Copy the simulated ticket note, record browser-only article feedback, and follow the related-article suggestions.
-6. Review the [automated tests](tests/test_kb.py) and [Pages deployment workflow](.github/workflows/pages.yml).
+6. Review the [evidence-state policy](HOW_THIS_KB_IS_VERIFIED.md), [automated tests](tests/test_kb.py), and [Pages deployment workflow](.github/workflows/pages.yml).
 
 ## What this project demonstrates
 
@@ -32,7 +32,7 @@ A searchable IT-support documentation lab built for remote Tier 1, help-desk, de
 - Article feedback, related-content suggestions, access labels, and one-click simulated ticket-note copying
 - Python static-site generation with sanitized Markdown output
 - Accessible navigation, responsive layout, and keyboard-friendly controls
-- Automated content validation, local link checking, CI, and GitHub Pages deployment
+- Automated content checks, evidence-state reporting, local link checking, CI, and GitHub Pages deployment
 
 ## Published support domains
 
@@ -50,7 +50,7 @@ A searchable IT-support documentation lab built for remote Tier 1, help-desk, de
 | Hardware & Peripherals | Displays, docks, audio, microphones, USB devices |
 | Accessibility | Consent-centered assistive-technology support |
 
-The published library intentionally favors 38 specific, interview-ready articles over a larger collection of repetitive or unverified material. Troubleshooting, how-to, checklist, quick-reference, concept, and security-response archetypes keep the structure appropriate to the task while preserving safety and validation standards.
+The published library contains 38 specific portfolio articles rather than a larger collection of repetitive material. Troubleshooting, how-to, checklist, quick-reference, concept, and security-response archetypes keep the structure appropriate to the task. All current articles are marked `concept_reviewed`; that label does not claim lab execution.
 
 ## Screenshots
 
@@ -68,7 +68,7 @@ IT-Knowledge-Base/
 │   ├── assets/                    # Recruiter-facing screenshots
 │   └── workflows/
 │       ├── ci.yml                 # Validate, test, and build every change
-│       └── pages.yml              # Deploy validated output to GitHub Pages
+│       └── pages.yml              # Deploy content-checked output to GitHub Pages
 ├── docs/                          # Published Markdown source
 │   ├── start-here/
 │   ├── accessibility/
@@ -91,6 +91,7 @@ IT-Knowledge-Base/
 │   └── renderer.py                # Template rendering
 ├── tests/test_kb.py               # Parser, content, build, and link tests
 ├── AUTHORING_GUIDE.md             # Article schema and writing standard
+├── HOW_THIS_KB_IS_VERIFIED.md      # Evidence states and promotion rules
 ├── requirements.txt
 ├── requirements-dev.txt
 └── README.md
@@ -98,12 +99,12 @@ IT-Knowledge-Base/
 
 Generation flow:
 
-1. `python -m kb check` validates every published article.
+1. `python -m kb check` applies the content rules to every published article.
 2. The parser normalizes metadata and rejects duplicate or placeholder content.
 3. Markdown is rendered and sanitized before entering autoescaped templates.
 4. The builder creates `index.html`, one page per article, local CSS/JavaScript, `search-index.json`, and `build-report.json`.
-5. Tests verify content integrity, generated files, local links, the simulation boundary, and self-contained assets.
-6. GitHub Pages deploys only after validation and tests pass.
+5. Tests verify content integrity, evidence metadata, generated files, local links, the simulation boundary, and self-contained assets.
+6. GitHub Pages deploys only after the content checks and tests pass.
 
 ## Run it on Windows
 
@@ -136,23 +137,24 @@ If PowerShell blocks virtual-environment activation, the project can still run t
 .\.venv\Scripts\python.exe -m http.server 8000 --directory .\output
 ```
 
-## Content quality gate
+## Content checks and evidence
 
 A published article must have:
 
 - A unique `KB-DOMAIN-###` identifier
 - A supported domain, article type, risk level, and matching folder
 - ISO `last_updated` date, author, support tier, tags, and platforms
+- An explicit evidence status from the controlled vocabulary
 - Summary, scope and safety, symptoms, information to collect, diagnostics, next action, validation, ticket note, escalation criteria, and references
 - At least two normalized tags
 - No duplicate body, copied permalink marker, or known placeholder phrase
 
-The build fails before deployment when any requirement is violated. See [AUTHORING_GUIDE.md](AUTHORING_GUIDE.md) for the exact schema.
+The build fails before deployment when any requirement is violated. Passing these checks does not establish lab or production execution. See [HOW_THIS_KB_IS_VERIFIED.md](HOW_THIS_KB_IS_VERIFIED.md) for the evidence boundary and [AUTHORING_GUIDE.md](AUTHORING_GUIDE.md) for the exact schema.
 
 ## Commands
 
 ```powershell
-# Validate published content without building
+# Check published content without building
 python -m kb check --docs .\docs
 
 # Run automated tests
@@ -180,11 +182,11 @@ output/
 └── build-report.json
 ```
 
-`build-report.json` contains derived portfolio facts such as article counts and quality-gate status. It does not contain production KPIs or employment results.
+`build-report.json` contains derived portfolio facts such as article counts, evidence-status counts, and content-check status. It does not contain production KPIs, procedure-execution proof, or employment results.
 
 ## Deployment
 
-[`.github/workflows/pages.yml`](.github/workflows/pages.yml) runs on pushes to `main` and manual dispatch. It installs dependencies, validates content, runs tests, builds the complete site, and deploys `output/` through the official GitHub Pages actions.
+[`.github/workflows/pages.yml`](.github/workflows/pages.yml) runs on pushes to `main` and manual dispatch. It installs dependencies, checks content, runs tests, builds the complete site, and deploys `output/` through the official GitHub Pages actions.
 
 GitHub Pages should remain configured with:
 
@@ -197,7 +199,8 @@ GitHub Pages should remain configured with:
 Useful points to explain:
 
 - Why quality and specificity matter more than article count
-- How the content gate prevents duplicate IDs and generic templates
+- How the content checks prevent duplicate IDs and generic templates
+- Why evidence status is separate from a successful build
 - Why the live site visibly labels every scenario as simulated
 - How the search index, filters, and query-string search work
 - Why commands include scope, approval, validation, and escalation guidance

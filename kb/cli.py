@@ -29,7 +29,10 @@ def main() -> int:
     try:
         if args.command == "check":
             articles = discover_articles(args.docs)
-            print(f"Validation passed: {len(articles)} published articles.")
+            print(
+                f"Content checks passed: {len(articles)} published articles. "
+                "See each article's evidence status for the verification boundary."
+            )
             return 0
         build_site(args.docs, args.output)
         return 0
